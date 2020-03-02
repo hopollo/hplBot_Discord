@@ -1,0 +1,22 @@
+{
+  "name": "hplDiscordBot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/server",
+    "start": "node src/server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0",
+    "fs": "0.0.1-security",
+    "node-fetch": "^2.6.0",
+    "nodemon": "^2.0.2",
+    "path": "^0.12.7",
+    "puppeteer": "^2.1.1"
+  }
+}

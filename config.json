@@ -1,0 +1,100 @@
+{
+  "Bot_Config": {
+    "id": 682969119406293002,
+    "commands_prefix": "!",
+    "stable_mode": {
+      "enabled": true,
+      "maintenance_game_message": "Maintenance...",
+      "stable_game_message": "Follow @HoPolloTV"
+    },
+    "logs": false
+  },
+  "Fossabot_Config": {
+    "scrapping": true,
+    "commands_url": "https://fossabot.com/commands/hopollo"
+  },
+  "StreamElements_Config": {
+    "scrapping": false,
+    "commands_url": "https://streamelements.com/commands/hopollo"
+  },
+  "StreamLabs_Config": {
+    "scrapping": false,
+    "commands_url": "https://streamlabs.com/commands/hopollo"
+  },
+  "Channels_Options": {
+    "welcome_channel": {
+      "allow_welcome": false,
+      "id": 273092628579483650,
+      "welcome_message": "Bienvenue chez HoPollo, {{user}}"
+    },
+    "logs_channel": {
+      "id": 331192523856805890,
+      "logs_options": {
+        "new_unique_users": {
+          "enabled": true,
+          "message": "@{{user}} joined the discord"
+        },
+        "channels_creations": {
+          "enabled": true,
+          "message": "@{{user}} created channel : `#{{channel}}`"
+        },
+        "channels_deletions": { 
+          "enabled": true,
+          "message": "@{{user}} removed `#{{channel}}` (`{{reason}}`)"
+        },
+        "users_movements": {
+          "enabled": true,
+          "switch_message": "**@{{user}} switched vocal channel : `#{{old}}` -> `#{{new}}`**",
+          "join_message" : "**@{{user}} joined vocal channel : `#{{new}}`**"
+        },
+        "users_actions": {
+          "enabled": true,
+          "message": "@{{user}} did something"
+        },
+        "users_info_changes": {
+          "enabled": true,
+          "message": "@{{user}} changed info : {{old}} -> {{new}}"
+        },
+        "bans": {
+          "enabled": true,
+          "message": "@{{user}} banned @{{victim}} ({{reason}})"
+        },
+        "server_joins": {
+          "enabled": true,
+          "message": "@{{user}} joined the server"
+        },
+        "server_leaves": {
+          "enable": true,
+          "message": "@{{user}} left the server ({{reason}})"
+        },
+        "generated_invites": {
+          "enabled": true,
+          "message": "@{{user}} created invite : {{inviteLink}} ({{inviteID}})"
+        }
+      }
+    },
+    "invites_channel": {
+      "id": 683036658051842134,
+      "post_invite_links": false,
+      "invite_links_message": "Rejoindre **{{user}}** sur **{{channel}}** : {{inviteLink}}",
+      "allow_only_commands_messages": true,
+      "allow_only_creations_commands": true
+    }
+  },
+  "Vocals_Options": {
+    "vocals_category_id": "464153673962881024",
+    "purge_options": {
+      "purge_creation_commands": true,
+      "purge_creation_commands_idle": 1500,
+      "purge_empty_channels": true,
+      "purge_old_invites_links": true
+    },
+    "max_users": {
+      "count": 20,
+      "reached_message": "Désolé, les **Customs** sont de **20 pers max**."
+    },
+    "creation_command": "!custom",
+    "custom_vocals_titles": "{{user}} Custom {{slots}}",
+    "move_creator_inside": true
+  }
+}
