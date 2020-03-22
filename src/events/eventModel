@@ -1,8 +1,0 @@
-"use_strict";
-
-const { } = require('../../config.json');
-const log = require('../utils/logs');
-
-module.exports = () => {
-  
-}

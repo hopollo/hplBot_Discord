@@ -1,0 +1,85 @@
+{
+  "Twitch_Bots_Config": {
+    "Fossabot": { "username": "", "enabled": false },
+    "Moobot": { "username": "", "enabled": false },
+    "Nightbot": { "username": "", "enabled": false },
+    "StreamElements": { "username": "", "enabled": false },
+    "StreamLabs": { "username": "", "enabled": false },
+    "Wizzbot": { "username": "", "enabled": false }
+  },
+  "Channels_Options": {
+    "welcome_channel": {
+      "allow_welcome": false,
+      "welcome_message": "Bienvenue chez {{server}}, {{user}}"
+    },
+    "logs_channel": {
+      "id": 0,
+      "logs_options": {
+        "new_unique_users": {
+          "enabled": true,
+          "message": "{{user}} joined the discord"
+        },
+        "channels_creations": {
+          "enabled": true,
+          "message": "{{user}} created channel : `{{channel}}`"
+        },
+        "channels_deletions": { 
+          "enabled": true,
+          "message": "{{user}} removed `{{channel}}` (`{{reason}}`)"
+        },
+        "users_movements": {
+          "enabled": true,
+          "switch_message": "**{{user}} switched vocal channel : `{{old}}` -> `{{new}}`**",
+          "join_message" : "**{{user}} joined vocal channel : `{{channel}}`**"
+        },
+        "users_actions": {
+          "enabled": true,
+          "message": "{{user}} did something"
+        },
+        "users_info_changes": {
+          "enabled": true,
+          "message": "{{user}} changed info : {{old}} -> {{new}}"
+        },
+        "bans": {
+          "enabled": true,
+          "message": "{{user}} banned @{{victim}} ({{reason}})"
+        },
+        "server_joins": {
+          "enabled": true,
+          "message": "{{user}} joined the server"
+        },
+        "server_leaves": {
+          "enable": true,
+          "message": "{{user}} left the server ({{reason}})"
+        },
+        "generated_invites": {
+          "enabled": true,
+          "message": "{{user}} created invite : {{inviteLink}} ({{inviteID}})"
+        }
+      }
+    },
+    "invites_channel": {
+      "id": 0,
+      "post_invite_links": false,
+      "invite_links_message": "Rejoindre **{{user}}** sur **{{channel}}** : {{inviteLink}}",
+      "allow_only_commands_messages": true,
+      "allow_only_creations_commands": true
+    }
+  },
+  "Vocals_Options": {
+    "vocals_category_id": "",
+    "purge_options": {
+      "purge_creation_commands": true,
+      "purge_creation_commands_idle": 1500,
+      "purge_empty_channels": true,
+      "purge_old_invites_links": true
+    },
+    "max_users": {
+      "count": 20,
+      "reached_message": "Désolé, les **Customs** sont de **20 pers max**."
+    },
+    "creation_command": "!custom",
+    "custom_vocals_titles": "{{user}} Custom {{slots}}",
+    "move_creator_inside": true
+  }
+}
