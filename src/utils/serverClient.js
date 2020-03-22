@@ -38,37 +38,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 var config_json_1 = require("../../config.json");
-var logs_1 = require("../utils/logs");
-function guildMemberRemove(member) {
-    return __awaiter(this, void 0, void 0, function () {
-        var config, allowLogs, author, reason, msgContent;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, member.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))); })];
-                case 1:
-                    config = _a.sent();
-                    allowLogs = config.Channels_Options.logs_channel.logs_options.server_leaves.enable;
-                    if (!allowLogs)
-                        return [2 /*return*/];
-                    author = member.user;
-                    reason = (member.deleted) ? 'Server Kicked' : 'User Choice';
-                    msgContent = config.Channels_Options.logs_channel.logs_options.server_leaves.message
-                        .replace('{{user}}', author.username)
-                        .replace('{{reason}}', reason);
-                    new logs_1.Log(author, msgContent);
-                    return [2 /*return*/];
-            }
+var ServerClient = /** @class */ (function () {
+    function ServerClient(id) {
+        this._id = id;
+        this.generateNewClient();
+    }
+    ServerClient.prototype.generateNewClient = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var serverClientPath, templatePath, config, tempChannels, commands;
+            var _this = this;
+            return __generator(this, function (_a) {
+                serverClientPath = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, this._id);
+                templatePath = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.templates.path);
+                config = config_json_1.Bot_Config.Servers_Config.templates.configFile;
+                tempChannels = config_json_1.Bot_Config.Servers_Config.templates.tempChannelsFile;
+                commands = config_json_1.Bot_Config.Servers_Config.templates.commandsFile;
+                fs_1.default.mkdir(serverClientPath, function (err) {
+                    if (err)
+                        return console.error;
+                    // tempChannels.json
+                    fs_1.default.copyFileSync(path_1.default.join(templatePath, tempChannels), path_1.default.join(serverClientPath, tempChannels));
+                    // commands.json
+                    fs_1.default.copyFileSync(path_1.default.join(templatePath, commands), path_1.default.join(serverClientPath, commands));
+                    // config.json
+                    fs_1.default.copyFileSync(path_1.default.join(templatePath, config), path_1.default.join(serverClientPath, config));
+                    console.log("New Server : " + _this._id + " -> Added");
+                });
+                return [2 /*return*/];
+            });
         });
-    });
-}
-exports.guildMemberRemove = guildMemberRemove;
+    };
+    return ServerClient;
+}());
+exports.ServerClient = ServerClient;

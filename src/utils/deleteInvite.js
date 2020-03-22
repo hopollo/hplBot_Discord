@@ -46,29 +46,38 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var logs_1 = require("./logs");
 var path_1 = __importDefault(require("path"));
 var config_json_1 = require("../../config.json");
-var logs_1 = require("../utils/logs");
-function guildMemberRemove(member) {
-    return __awaiter(this, void 0, void 0, function () {
-        var config, allowLogs, author, reason, msgContent;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, member.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))); })];
-                case 1:
-                    config = _a.sent();
-                    allowLogs = config.Channels_Options.logs_channel.logs_options.server_leaves.enable;
-                    if (!allowLogs)
+var serverDir = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path);
+var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
+var DeleteInvite = /** @class */ (function () {
+    function DeleteInvite() {
+    }
+    DeleteInvite.prototype.deleteInviteLink = function (target, reason) {
+        return __awaiter(this, void 0, void 0, function () {
+            var config, deleteInviteLink, allowLogs, msgContent;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(serverDir, target.guild.id, configFile))); })];
+                    case 1:
+                        config = _a.sent();
+                        deleteInviteLink = config.Vocals_Options.purge_options.purge_old_invites_links;
+                        allowLogs = config.Vocals_Options.logs_options.channels_deletions.enabled;
+                        if (!deleteInviteLink)
+                            return [2 /*return*/];
+                        if (!allowLogs)
+                            return [2 /*return*/];
+                        msgContent = config.Vocals_Options.logs_options.channels_deletions.message
+                            .replace('{{user}}', target.author.username)
+                            .replace('{{channel}}', target.channel.id)
+                            .replace('{{reason}}', reason);
+                        new logs_1.Log(target.author, msgContent);
                         return [2 /*return*/];
-                    author = member.user;
-                    reason = (member.deleted) ? 'Server Kicked' : 'User Choice';
-                    msgContent = config.Channels_Options.logs_channel.logs_options.server_leaves.message
-                        .replace('{{user}}', author.username)
-                        .replace('{{reason}}', reason);
-                    new logs_1.Log(author, msgContent);
-                    return [2 /*return*/];
-            }
+                }
+            });
         });
-    });
-}
-exports.guildMemberRemove = guildMemberRemove;
+    };
+    return DeleteInvite;
+}());
+exports.DeleteInvite = DeleteInvite;
