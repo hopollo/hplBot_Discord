@@ -57,7 +57,7 @@ function channelDelete(channel) {
                 case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, channel.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))); })];
                 case 1:
                     config = _a.sent();
-                    allowLogs = config.config.Channels_Options.logs_channel.logs_options.channels_deletions.enabled;
+                    allowLogs = config.Channels_Options.logs_channel.logs_options.channels_deletions.enabled;
                     if (!allowLogs)
                         return [2 /*return*/];
                     author = channel.client.user;

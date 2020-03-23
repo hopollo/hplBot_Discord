@@ -10,18 +10,28 @@ const configFile = Bot_Config.Servers_Config.templates.configFile;
 export async function voiceStateUpdate(oldState: VoiceState , newState: VoiceState) {
   const config = await import(path.join(serverDir, newState.guild.id, configFile));
   const allowLogs = config.Channels_Options.logs_channel.logs_options.users_movements.enabled;
-  //log("users_movements", msg, option);
-  
-  const membersInside: number = oldState.channel?.members.array.length as number;
 
   if (!allowLogs) return;
+
+  if (oldState.channel?.id && newState.channel?.id) {
+    const msgContent: string = config.Channels_Options.logs_channel.logs_options.users_movements.switch_message
+        .replace('{{user}}', newState.client.user?.username)
+        .replace('{{old}}', oldState.channel!.name)
+        .replace('{{new}}', newState.channel!.name)
+
+    new Log(newState.client.user!, msgContent)
     
-  const msgContent: string = config.Channels_Options.logs_channel.logs_options.users_movements.switch_message
-      .replace('{{user}}', newState.client.user?.username)
-      .replace('{{old}}', oldState.channel?.name)
-      .replace('{{new}}', newState.channel?.name)
-  
-  new Log(newState.client.user!, msgContent)
-  
-  new ChannelDeleter().checkUsersOf(oldState.channel!);
+    new ChannelDeleter().checkUsersOf(oldState.channel!);
+  } else if (oldState.channel?.id === undefined && newState.channel?.id) {
+    const msgContent: string = config.Channels_Options.logs_channel.logs_options.users_movements.join_message
+        .replace('{{user}}', newState.client.user!.username)
+        .replace('{{channel}}', newState.channel!.name)
+    
+    new Log(newState.client.user!, msgContent)
+
+    new ChannelDeleter().checkUsersOf(newState.channel!);
+  } else {
+    // Handles disconnect
+    new ChannelDeleter().checkUsersOf(oldState.channel!);
+  }
 }

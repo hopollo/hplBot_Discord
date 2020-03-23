@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path = require('path');
 import { Log } from './logs';
-import { DataWriter } from './write';
-import { VoiceChannel, Message, Guild, Collection, Snowflake, GuildChannel, GuildManager } from 'discord.js';
+import { VoiceChannel, GuildManager } from 'discord.js';
 import { Bot_Config } from '../../config.json';
 
 const serverDir = path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path);
@@ -19,7 +18,7 @@ export class ChannelDeleter {
   }
     
   public checkUsersBulk(guild: GuildManager) {
-    guild.cache.forEach(async g => {
+    guild!.cache.forEach(async g => {
       const config = await import(path.join(serverDir, g.id, configFile));
       const tempChannelsContainerID = config.Vocals_Options.vocals_category_id;
       const tempChannel = g.channels.cache.filter(c => c.type === "voice" && c.parentID === tempChannelsContainerID);

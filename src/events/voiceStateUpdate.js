@@ -53,24 +53,36 @@ var deleteChannel_1 = require("../utils/deleteChannel");
 var serverDir = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 function voiceStateUpdate(oldState, newState) {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function () {
-        var config, allowLogs, membersInside, msgContent;
-        return __generator(this, function (_e) {
-            switch (_e.label) {
+        var config, allowLogs, msgContent, msgContent;
+        return __generator(this, function (_f) {
+            switch (_f.label) {
                 case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(serverDir, newState.guild.id, configFile))); })];
                 case 1:
-                    config = _e.sent();
+                    config = _f.sent();
                     allowLogs = config.Channels_Options.logs_channel.logs_options.users_movements.enabled;
-                    membersInside = (_a = oldState.channel) === null || _a === void 0 ? void 0 : _a.members.array.length;
                     if (!allowLogs)
                         return [2 /*return*/];
-                    msgContent = config.Channels_Options.logs_channel.logs_options.users_movements.switch_message
-                        .replace('{{user}}', (_b = newState.client.user) === null || _b === void 0 ? void 0 : _b.username)
-                        .replace('{{old}}', (_c = oldState.channel) === null || _c === void 0 ? void 0 : _c.name)
-                        .replace('{{new}}', (_d = newState.channel) === null || _d === void 0 ? void 0 : _d.name);
-                    new logs_1.Log(newState.client.user, msgContent);
-                    new deleteChannel_1.ChannelDeleter().checkUsersOf(oldState.channel);
+                    if (((_a = oldState.channel) === null || _a === void 0 ? void 0 : _a.id) && ((_b = newState.channel) === null || _b === void 0 ? void 0 : _b.id)) {
+                        msgContent = config.Channels_Options.logs_channel.logs_options.users_movements.switch_message
+                            .replace('{{user}}', (_c = newState.client.user) === null || _c === void 0 ? void 0 : _c.username)
+                            .replace('{{old}}', oldState.channel.name)
+                            .replace('{{new}}', newState.channel.name);
+                        new logs_1.Log(newState.client.user, msgContent);
+                        new deleteChannel_1.ChannelDeleter().checkUsersOf(oldState.channel);
+                    }
+                    else if (((_d = oldState.channel) === null || _d === void 0 ? void 0 : _d.id) === undefined && ((_e = newState.channel) === null || _e === void 0 ? void 0 : _e.id)) {
+                        msgContent = config.Channels_Options.logs_channel.logs_options.users_movements.join_message
+                            .replace('{{user}}', newState.client.user.username)
+                            .replace('{{channel}}', newState.channel.name);
+                        new logs_1.Log(newState.client.user, msgContent);
+                        new deleteChannel_1.ChannelDeleter().checkUsersOf(newState.channel);
+                    }
+                    else {
+                        // Handles disconnect
+                        new deleteChannel_1.ChannelDeleter().checkUsersOf(oldState.channel);
+                    }
                     return [2 /*return*/];
             }
         });
