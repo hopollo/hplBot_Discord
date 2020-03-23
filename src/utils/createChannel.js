@@ -47,7 +47,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
-var write_1 = require("../utils/write");
 var config_json_1 = require("../../config.json");
 var logs_1 = require("./logs");
 var move_1 = require("./move");
@@ -60,17 +59,13 @@ var ChannelCreator = /** @class */ (function () {
         this.createNewVoiceChannel(this._msg, this._name, this._slots);
     }
     ChannelCreator.prototype.createNewVoiceChannel = function (msg, channelName, slotsLimit) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var config, tempChannels, vocalsContainerID, vocalsMaxSlots, reachedMessage, deleteCreationCommand, msgDeleteIdle, moveCreator, shareInvite, allowLogs, newChannel, msgContent;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var config, vocalsContainerID, vocalsMaxSlots, reachedMessage, deleteCreationCommand, msgDeleteIdle, moveCreator, shareInvite, allowLogs, newChannel, msgContent;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, msg.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))); })];
                     case 1:
-                        config = _b.sent();
-                        return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, msg.guild.id, config_json_1.Bot_Config.Servers_Config.templates.tempChannelsFile))); })];
-                    case 2:
-                        tempChannels = _b.sent();
+                        config = _a.sent();
                         vocalsContainerID = config.Vocals_Options.vocals_category_id;
                         vocalsMaxSlots = config.Vocals_Options.max_users.count;
                         reachedMessage = config.Vocals_Options.max_users.reached_message;
@@ -78,32 +73,28 @@ var ChannelCreator = /** @class */ (function () {
                         msgDeleteIdle = config.Vocals_Options.purge_options.purge_creation_commands_idle;
                         moveCreator = config.Vocals_Options.move_creator_inside;
                         shareInvite = config.Channels_Options.invites_channel.post_invite_links;
-                        allowLogs = config.Channels_Options.logs_options.channels_creations.enabled;
+                        allowLogs = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
                         // Issues & security tweaks for custom numbers especially
                         if (isNaN(slotsLimit))
                             return [2 /*return*/, undefined];
                         if (slotsLimit >= vocalsMaxSlots)
                             return [2 /*return*/, msg.reply(reachedMessage)];
-                        return [4 /*yield*/, ((_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.create(channelName, {
-                                type: 'voice',
+                        return [4 /*yield*/, msg.guild.channels.create(channelName, {
+                                type: "voice",
                                 userLimit: slotsLimit,
                                 // REMARK : Huge issue there, there's no way to convert channel id to "1615616",
                                 // the only way to makes it works is to set the "" manually inside the config line
                                 // it's never working otherwise, is it a lib issue ??
                                 parent: vocalsContainerID
-                            }).catch(console.error))];
-                    case 3:
-                        newChannel = _b.sent();
+                            }).catch(console.error)];
+                    case 2:
+                        newChannel = _a.sent();
                         // Delete the command msg for clearance
                         if (deleteCreationCommand)
-                            msg.delete({ timeout: msgDeleteIdle });
-                        if (shareInvite) {
+                            msg.delete({ timeout: msgDeleteIdle }).catch(console.error);
+                        // Create an invite for the new temp channel
+                        if (shareInvite)
                             new createInvite_1.CreateInvite(newChannel);
-                        }
-                        else {
-                            // Add both to use them for deletions after
-                            new write_1.DataWriter().appendTo(tempChannels, { channelID: newChannel.id, inviteID: null });
-                        }
                         // Moves the user into his new temporary channel feature
                         if (moveCreator)
                             new move_1.Mover(msg.member, newChannel);

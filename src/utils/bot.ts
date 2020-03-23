@@ -1,4 +1,4 @@
-import { Client, GuildMember, GuildChannel, Message, User } from 'discord.js';
+import { Client, GuildMember, GuildChannel, Message, User, VoiceState } from 'discord.js';
 import { ready } from '../events/ready';
 import { message } from '../events/message';
 import { userUpdate } from '../events/userUpdate';
@@ -18,7 +18,7 @@ export class HplBot {
 
     client.once('ready', () => ready(client));
     client.on('guildMemberAdd', (member: GuildMember) => guildMemberAdd(member));
-    client.on('voiceStateUpdate', (oldChannel: GuildMember, newChannel: GuildMember) => voiceStateUpdate(oldChannel, newChannel));
+    client.on('voiceStateUpdate', (oldChannel: VoiceState, newChannel: VoiceState) => voiceStateUpdate(oldChannel, newChannel));
     client.on('message', (msg: Message) => message(msg));
     client.on('userUpdate', (oldUser: User, newUser: User) => userUpdate(oldUser, newUser));
     client.on('guildMemberRemove', (member: GuildMember) => guildMemberRemove(member));

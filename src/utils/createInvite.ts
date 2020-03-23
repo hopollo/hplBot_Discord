@@ -1,5 +1,5 @@
 import path from 'path';
-import { Invite, VoiceChannel, TextChannel } from 'discord.js';
+import { Invite, VoiceChannel, TextChannel, GuildChannel } from 'discord.js';
 import { Log } from './logs';
 import { DataWriter } from './write';
 import { Bot_Config } from '../../config.json';
@@ -14,7 +14,7 @@ export class CreateInvite {
 
   async createInviteToNewTempVoiceChannel(source: VoiceChannel) {
     const config = await import(path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path, source.guild.id, Bot_Config.Servers_Config.templates.configFile));
-    const invitesChannelContainerID: number = config.Channels_Options.invites_channel.id;
+    const invitesChannelContainerID: string = config.Channels_Options.invites_channel.id;
     const allowLogs: boolean = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
     const tempChannels = await import(path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path, source.guild.id, Bot_Config.Servers_Config.templates.tempChannelsFile));
 
@@ -29,8 +29,8 @@ export class CreateInvite {
     new DataWriter().appendTo(tempChannels, {channelID: source.id, inviteID: source.client.user?.lastMessageID});
 
     // Share the invitation to the correct invitations channel
-    const invitationToShare: TextChannel = source.guild.channels.cache.get(invitesChannelContainerID.toString());
-    if (invitationToShare.type === 'text') return invitationToShare.send(inviteLink);
+    const invitationToShare = source.guild.channels.cache.get(invitesChannelContainerID) as TextChannel;
+    if (invitationToShare) return invitationToShare.send(inviteLink);
 
     const author = source.client.user;
     const msgContent = config.Channels_Options.logs_channel.logs_options.channels_creations.message

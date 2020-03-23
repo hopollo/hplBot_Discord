@@ -77,7 +77,7 @@ function message(msg) {
                 });
             });
         }
-        var stableMode, authorUsername, msgContent, commandsPrefix, config, customCommand, slots, customChannelsNamesTemplate;
+        var stableMode, authorUsername, msgContent, commandsPrefix, config, isCommand, invitesChannelID, isInvitesChannel, onlyCommands, onlyCreations, customCommand, slots, customChannelsNamesTemplate;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -88,8 +88,17 @@ function message(msg) {
                     return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(serverDir, (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id, configFile))); })];
                 case 1:
                     config = _b.sent();
+                    isCommand = msgContent.startsWith(commandsPrefix);
+                    invitesChannelID = config.Channels_Options.invites_channel.id;
+                    isInvitesChannel = msg.channel.id === invitesChannelID;
+                    onlyCommands = config.Channels_Options.invites_channel.allow_only_commands_messages;
+                    onlyCreations = config.Channels_Options.invites_channel.allow_only_creation_messages;
                     customCommand = config.Vocals_Options.creation_command;
-                    if (msg.author.bot || !msgContent.startsWith(commandsPrefix))
+                    if (isInvitesChannel && !msg.author.bot && onlyCommands && !isCommand) {
+                        if (msg.deletable)
+                            return [2 /*return*/, msg.delete({ reason: "Not allowed in this channel" }).catch(console.error)];
+                    }
+                    if (msg.author.bot || !isCommand)
                         return [2 /*return*/, undefined];
                     if (!stableMode)
                         return [2 /*return*/, msg.reply('Maintenance en cours du bot, merci de réessayer plus tard.')];
@@ -106,10 +115,10 @@ function message(msg) {
                             new logs_1.Log(msg.author, msgContent);
                             break;
                         case '!hplBot':
-                            msg.reply('Mon site : https://hopollo.netlify.com/');
+                            msg.reply('HplBot Website : https://hplbot.netlify.com/');
                             break;
                         case '!help':
-                            msg.reply('HplBot Commands : https://www.hplbot.com/discord/commands/hplbot');
+                            msg.reply('HplBot Commands : https://www.hplbot.netlify.com/discord/commands/hplbot');
                             break;
                         case '!hplbot':
                             msg.reply('HplBot est un bot discord et twitch, créer par @HoPolloTV');

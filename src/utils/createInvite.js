@@ -78,8 +78,8 @@ var CreateInvite = /** @class */ (function () {
                             .replace('{{inviteLink}}', newChannelInvite.url);
                         // Add both to use them for deletions after
                         new write_1.DataWriter().appendTo(tempChannels, { channelID: source.id, inviteID: (_b = source.client.user) === null || _b === void 0 ? void 0 : _b.lastMessageID });
-                        invitationToShare = source.guild.channels.cache.get(invitesChannelContainerID.toString());
-                        if (invitationToShare.type === 'text')
+                        invitationToShare = source.guild.channels.cache.get(invitesChannelContainerID);
+                        if (invitationToShare)
                             return [2 /*return*/, invitationToShare.send(inviteLink)];
                         author = source.client.user;
                         msgContent = config.Channels_Options.logs_channel.logs_options.channels_creations.message

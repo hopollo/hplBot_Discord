@@ -7,10 +7,15 @@ export class DataWriter {
     });
   }
 
-  async appendTo(filePath: string, data: object) {
+  appendTo(filePath: string, data: Object) {
+    // TODO: NOT FINISHED
+    
     fs.readFile(filePath, (err, json) => {
       if (err) return console.error;
-      if (!json) return console.error(new Error(`${filePath} : No data inside`));
+      //Generate default + adds data to it
+      if (!json) return fs.appendFile(filePath, JSON.stringify(data), (err) => {
+        if (err) console.error;
+      });
       
       let array = JSON.parse(json.toString());
       array.push(data);

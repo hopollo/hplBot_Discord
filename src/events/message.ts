@@ -14,11 +14,21 @@ export async function message(msg: Message) {
   const msgContent: string = msg.content.toLowerCase();
   const commandsPrefix: string = Bot_Config.commands_prefix || '!';
   const config = await import(path.join(serverDir, msg.guild?.id!, configFile));
+  const isCommand: boolean = msgContent.startsWith(commandsPrefix);
+  const invitesChannelID: string = config.Channels_Options.invites_channel.id;
+  const isInvitesChannel: boolean = msg.channel.id === invitesChannelID;
+  const onlyCommands: boolean = config.Channels_Options.invites_channel.allow_only_commands_messages;
+  const onlyCreations: boolean = config.Channels_Options.invites_channel.allow_only_creation_messages;
 
   const customCommand: string = config.Vocals_Options.creation_command;
 
-  if (msg.author.bot || !msgContent.startsWith(commandsPrefix)) return undefined;
+  if (isInvitesChannel && !msg.author.bot && onlyCommands && !isCommand) {
+    if (msg.deletable) return msg.delete({reason: "Not allowed in this channel"}).catch(console.error);
+  }
+  
+  if (msg.author.bot || !isCommand) return undefined;
   if (!stableMode) return msg.reply('Maintenance en cours du bot, merci de réessayer plus tard.');
+  
 
   // Create custom size vocals feature
   if (msgContent.includes(customCommand)) {
@@ -36,10 +46,10 @@ export async function message(msg: Message) {
       new Log(msg.author, msgContent);
       break;
     case '!hplBot':
-      msg.reply('Mon site : https://hopollo.netlify.com/');
+      msg.reply('HplBot Website : https://hplbot.netlify.com/');
       break;
     case '!help':
-      msg.reply('HplBot Commands : https://www.hplbot.com/discord/commands/hplbot');
+      msg.reply('HplBot Commands : https://www.hplbot.netlify.com/discord/commands/hplbot');
       break;
     case '!hplbot':
       msg.reply('HplBot est un bot discord et twitch, créer par @HoPolloTV');

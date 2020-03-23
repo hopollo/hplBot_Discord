@@ -35,9 +35,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -46,10 +43,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs_1 = __importDefault(require("fs"));
 var path = require("path");
-var write_1 = require("./write");
-var serverClient_1 = require("./serverClient");
+var logs_1 = require("./logs");
 var config_json_1 = require("../../config.json");
 var serverDir = path.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
@@ -59,65 +54,60 @@ var ChannelDeleter = /** @class */ (function () {
     }
     ChannelDeleter.prototype.checkUsersOf = function (channel) {
         return __awaiter(this, void 0, void 0, function () {
-            var config, tempChannels, found;
+            var config, tempChannelsContainerID;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path.join(serverDir, channel.id, configFile))); })];
+                    case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path.join(serverDir, channel.guild.id, configFile))); })];
                     case 1:
                         config = _a.sent();
-                        console.log(config);
-                        return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path.join(serverDir, channel.id, tempChannelsFile))); })];
-                    case 2:
-                        tempChannels = _a.sent();
-                        found = tempChannels.find(channel.id);
-                        if (!found)
-                            return [2 /*return*/];
-                        this.deleteChannel(channel);
+                        tempChannelsContainerID = config.Vocals_Options.vocals_category_id;
+                        if (channel.type === "voice" && channel.parentID === tempChannelsContainerID) {
+                            this.deleteTempChannel(channel, config);
+                        }
                         return [2 /*return*/];
                 }
             });
         });
     };
-    ChannelDeleter.prototype.checkUsers = function (guild) {
-        guild.forEach(function (g) {
-            fs_1.default.exists(path.join(serverDir, g.id.toString()), function (exists) {
-                if (!exists) {
-                    return new serverClient_1.ServerClient(g.id);
-                }
-                else {
-                    fs_1.default.readFile(path.join(serverDir, g.id, tempChannelsFile), function (err, data) {
-                        if (err)
-                            console.error;
-                    });
-                }
-            });
-        });
-    };
-    ChannelDeleter.prototype.deleteChannel = function (target) {
-        return __awaiter(this, void 0, void 0, function () {
-            var configFile, tempChannels, allowDeletion, usersCount, targetTempChannelData, msgContent;
+    ChannelDeleter.prototype.checkUsersBulk = function (guild) {
+        var _this = this;
+        guild.cache.forEach(function (g) { return __awaiter(_this, void 0, void 0, function () {
+            var config, tempChannelsContainerID, tempChannel;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path.join(serverDir, target.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))); })];
+                    case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path.join(serverDir, g.id, configFile))); })];
                     case 1:
-                        configFile = _a.sent();
-                        return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path.join(serverDir, target.guild.id, config_json_1.Bot_Config.Servers_Config.templates.tempChannelsFile))); })];
-                    case 2:
-                        tempChannels = _a.sent();
-                        allowDeletion = configFile.Vocals_Options.purge_options.purge_empty_channels;
-                        if (!allowDeletion)
-                            return [2 /*return*/];
-                        usersCount = target.members.array.length;
-                        if (usersCount !== 0 || !target.deletable)
-                            return [2 /*return*/];
-                        target.delete();
-                        targetTempChannelData = tempChannels.find(target.id);
-                        if (!targetTempChannelData)
-                            return [2 /*return*/, new Error("Error to GET " + target.id + " FROM tempChannels.json")];
-                        new write_1.DataWriter().removeTo(tempChannels, target.id);
-                        msgContent = '';
+                        config = _a.sent();
+                        tempChannelsContainerID = config.Vocals_Options.vocals_category_id;
+                        tempChannel = g.channels.cache.filter(function (c) { return c.type === "voice" && c.parentID === tempChannelsContainerID; });
+                        tempChannel.forEach(function (c) {
+                            _this.deleteTempChannel(c, config);
+                        });
                         return [2 /*return*/];
                 }
+            });
+        }); });
+    };
+    ChannelDeleter.prototype.deleteTempChannel = function (target, config) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var allowDeletion, usersCount, reason, msgContent;
+            return __generator(this, function (_b) {
+                allowDeletion = config.Vocals_Options.purge_options.purge_empty_channels;
+                if (!allowDeletion)
+                    return [2 /*return*/];
+                usersCount = target.members.array().length;
+                if (usersCount !== 0 || !target.deletable)
+                    return [2 /*return*/];
+                target.delete();
+                reason = 'EmptyTempChannel';
+                msgContent = config.Channels_Options.logs_channel.logs_options.channels_deletions.message
+                    .replace("{{user}}", (_a = target.client.user) === null || _a === void 0 ? void 0 : _a.username)
+                    .replace("{{channel}}", target.name)
+                    .replace("{{reason}}", reason);
+                new logs_1.Log(target.client.user, msgContent);
+                return [2 /*return*/];
             });
         });
     };

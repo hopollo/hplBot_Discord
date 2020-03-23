@@ -49,30 +49,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var config_json_1 = require("../../config.json");
 var logs_1 = require("../utils/logs");
-var write_1 = require("../utils/write");
 function channelDelete(channel) {
     return __awaiter(this, void 0, void 0, function () {
-        var config, tempChannels, channelID, allowLogs, found, author, reason, msgContent;
+        var config, allowLogs, author, reason, msgContent;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, channel.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))); })];
                 case 1:
                     config = _a.sent();
-                    return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, channel.guild.id, config_json_1.Bot_Config.Servers_Config.templates.tempChannelsFile))); })];
-                case 2:
-                    tempChannels = _a.sent();
-                    channelID = channel.id;
                     allowLogs = config.config.Channels_Options.logs_channel.logs_options.channels_deletions.enabled;
-                    found = tempChannels.map(function (cn) { return cn.id === channelID; })[0];
-                    if (found)
-                        new write_1.DataWriter().removeTo(tempChannels, channelID);
                     if (!allowLogs)
                         return [2 /*return*/];
                     author = channel.client.user;
                     reason = 'User choice';
                     msgContent = config.Channels_Options.logs_channel.logs_options.channels_deletions.message
                         .replace('{{user}}', author.username)
-                        .replace('{{channel}}', channelID)
+                        .replace('{{channel}}', channel.id)
                         .replace('{{reason}}', reason);
                     new logs_1.Log(author, msgContent);
                     return [2 /*return*/];

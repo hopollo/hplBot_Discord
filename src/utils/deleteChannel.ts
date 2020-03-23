@@ -2,8 +2,7 @@ import fs from 'fs';
 import path = require('path');
 import { Log } from './logs';
 import { DataWriter } from './write';
-import { VoiceChannel, Message, Guild, Collection, Snowflake } from 'discord.js';
-import { ServerClient } from './serverClient';
+import { VoiceChannel, Message, Guild, Collection, Snowflake, GuildChannel, GuildManager } from 'discord.js';
 import { Bot_Config } from '../../config.json';
 
 const serverDir = path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path);
@@ -12,50 +11,41 @@ const tempChannelsFile = Bot_Config.Servers_Config.templates.tempChannelsFile;
 
 export class ChannelDeleter {
   public async checkUsersOf(channel: VoiceChannel) {
-    const config = await import(path.join(serverDir, channel.id, configFile));
-    console.log(config);
-    
-    const tempChannels = await import(path.join(serverDir, channel.id, tempChannelsFile));
-    const found = tempChannels.find(channel.id);
-    
-    if (!found) return;
-
-    this.deleteChannel(channel);
+    const config = await import(path.join(serverDir, channel.guild.id, configFile));
+    const tempChannelsContainerID = config.Vocals_Options.vocals_category_id;
+    if (channel.type === "voice" && channel.parentID === tempChannelsContainerID) {
+      this.deleteTempChannel(channel, config);
+    }
   }
     
-  public checkUsers(guild: Collection<Snowflake, Guild>) {
-    guild.forEach(g => {
-      fs.exists(path.join(serverDir, g.id.toString()), exists => {
-        if (!exists) {
-          return new ServerClient(g.id);
-        } else {
-          fs.readFile(path.join(serverDir, g.id, tempChannelsFile), (err, data) => {
-            if (err) console.error;
-          });
-        }
+  public checkUsersBulk(guild: GuildManager) {
+    guild.cache.forEach(async g => {
+      const config = await import(path.join(serverDir, g.id, configFile));
+      const tempChannelsContainerID = config.Vocals_Options.vocals_category_id;
+      const tempChannel = g.channels.cache.filter(c => c.type === "voice" && c.parentID === tempChannelsContainerID);
+      tempChannel.forEach(c => {
+        this.deleteTempChannel(c as VoiceChannel, config)
       });
     });
   }
   
-  private async deleteChannel(target: VoiceChannel) {
-    const configFile = await import(path.join(serverDir, target.guild.id, Bot_Config.Servers_Config.templates.configFile));
-    const tempChannels = await import(path.join(serverDir, target.guild.id, Bot_Config.Servers_Config.templates.tempChannelsFile)); 
-    const allowDeletion = configFile.Vocals_Options.purge_options.purge_empty_channels;
-    
+  private async deleteTempChannel(target: VoiceChannel, config: any) {
+    const allowDeletion = config.Vocals_Options.purge_options.purge_empty_channels;
+
     if (!allowDeletion) return;
-
-    const usersCount = target.members.array.length;
-
+    
+    const usersCount = target.members.array().length;
+    
     if (usersCount !== 0 || !target.deletable) return;
+
     target.delete();
 
-    // get the object concerned in order to removes it from json
-    const targetTempChannelData: boolean = tempChannels.find(target.id);
-    if (!targetTempChannelData) return new Error(`Error to GET ${target.id} FROM tempChannels.json`);
+    const reason = 'EmptyTempChannel'
+    const msgContent = config.Channels_Options.logs_channel.logs_options.channels_deletions.message
+      .replace("{{user}}", target.client.user?.username)
+      .replace("{{channel}}", target.name)
+      .replace("{{reason}}", reason);
 
-    new DataWriter().removeTo(tempChannels, target.id);
-
-    const msgContent = ''
-    // Add LOGS
+    new Log(target.client.user!, msgContent);
   }
 }
