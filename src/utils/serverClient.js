@@ -42,17 +42,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 var config_json_1 = require("../../config.json");
+var serverDir = config_json_1.Bot_Config.Servers_Config.servers_path;
 var ServerClient = /** @class */ (function () {
-    function ServerClient(id) {
-        this._id = id;
-        this.generateNewClient();
+    function ServerClient() {
     }
-    ServerClient.prototype.generateNewClient = function () {
+    ServerClient.prototype.removeClient = function (id) {
+        var filePath = path_1.default.join(serverDir, id);
+        fs_1.default.exists(filePath, function (exists) {
+            if (exists)
+                fs_1.default.rmdir(filePath, function (err) { if (err)
+                    console.error; });
+        });
+    };
+    ServerClient.prototype.generateNewClient = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var serverClientPath, templatePath, config, tempChannels, commands;
-            var _this = this;
             return __generator(this, function (_a) {
-                serverClientPath = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, this._id);
+                serverClientPath = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, id);
                 templatePath = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.templates.path);
                 config = config_json_1.Bot_Config.Servers_Config.templates.configFile;
                 tempChannels = config_json_1.Bot_Config.Servers_Config.templates.tempChannelsFile;
@@ -66,7 +72,6 @@ var ServerClient = /** @class */ (function () {
                     fs_1.default.copyFileSync(path_1.default.join(templatePath, commands), path_1.default.join(serverClientPath, commands));
                     // config.json
                     fs_1.default.copyFileSync(path_1.default.join(templatePath, config), path_1.default.join(serverClientPath, config));
-                    console.log("New Server : " + _this._id + " -> Added");
                 });
                 return [2 /*return*/];
             });

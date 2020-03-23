@@ -9,6 +9,8 @@ var channelCreate_1 = require("../events/channelCreate");
 var channelDelete_1 = require("../events/channelDelete");
 var guildMemberAdd_1 = require("../events/guildMemberAdd");
 var guildMemberRemove_1 = require("../events/guildMemberRemove");
+var guildCreate_1 = require("../events/guildCreate");
+var guildDelete_1 = require("../events/guildDelete");
 var HplBot = /** @class */ (function () {
     function HplBot() {
     }
@@ -24,6 +26,8 @@ var HplBot = /** @class */ (function () {
         client.on('guildMemberRemove', function (member) { return guildMemberRemove_1.guildMemberRemove(member); });
         client.on('channelCreate', function (channel) { return channelCreate_1.channelCreate(channel); });
         client.on('channelDelete', function (channel) { return channelDelete_1.channelDelete(channel); });
+        client.on('guildCreate', function (guild) { return guildCreate_1.guildCreate(guild); });
+        client.on('guildDelete', function (guild) { return guildDelete_1.guildDelete(guild); });
     };
     return HplBot;
 }());

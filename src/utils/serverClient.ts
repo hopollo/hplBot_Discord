@@ -2,16 +2,19 @@ import fs from 'fs';
 import path from 'path';
 import { Bot_Config } from '../../config.json';
 
-export class ServerClient {
-  private readonly _id: string;
+const serverDir = Bot_Config.Servers_Config.servers_path;
 
-  constructor(id: string) {
-    this._id = id;
-    this.generateNewClient();
+export class ServerClient {
+
+  public removeClient(id: string) {
+    const filePath = path.join(serverDir, id);
+    fs.exists(filePath, (exists) => {
+      if (exists) fs.rmdir(filePath, (err) => { if (err) console.error; })
+    });
   }
 
-  public async generateNewClient() {
-    const serverClientPath = path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path, this._id);
+  public async generateNewClient(id: string) {
+    const serverClientPath = path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path, id);
     const templatePath = path.join(__dirname, '../..', Bot_Config.Servers_Config.templates.path);
     const config = Bot_Config.Servers_Config.templates.configFile;
     const tempChannels = Bot_Config.Servers_Config.templates.tempChannelsFile;
@@ -25,8 +28,6 @@ export class ServerClient {
       fs.copyFileSync(path.join(templatePath, commands), path.join(serverClientPath, commands));
       // config.json
       fs.copyFileSync(path.join(templatePath, config), path.join(serverClientPath, config));
-
-      console.log(`New Server : ${this._id} -> Added`);
     });
   }
 }
