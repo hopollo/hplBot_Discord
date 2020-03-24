@@ -16,5 +16,14 @@ function StartSliding() {
 
 StartSliding();
 
+// TODO: (HoPollo): change this to something more "pro"
+document.querySelector('button').onmouseenter = () => {
+  document.querySelector('button').innerText = "NOW !";
+}
+
+document.querySelector('button').onmouseleave = () => {
+  document.querySelector('button').innerText = "GET IT";
+}
+
 
 
