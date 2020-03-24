@@ -42,10 +42,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
 var config_json_1 = require("../../config.json");
+var deleteChannel_1 = require("./deleteChannel");
 var serverDir = config_json_1.Bot_Config.Servers_Config.servers_path;
 var ServerClient = /** @class */ (function () {
     function ServerClient() {
     }
+    ServerClient.prototype.updateClients = function (guilds) {
+        var _this = this;
+        guilds.cache.forEach(function (g) {
+            fs_1.default.exists(path_1.default.join(serverDir, g.id), function (exists) {
+                if (!exists)
+                    return _this.generateNewClient(g.id);
+                // Checks and purge temp channels
+                new deleteChannel_1.ChannelDeleter().checkUsersBulk(guilds);
+            });
+        });
+    };
     ServerClient.prototype.removeClient = function (id) {
         var filePath = path_1.default.join(serverDir, id);
         fs_1.default.exists(filePath, function (exists) {
@@ -56,22 +68,25 @@ var ServerClient = /** @class */ (function () {
     };
     ServerClient.prototype.generateNewClient = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var serverClientPath, templatePath, config, tempChannels, commands;
+            var serverClientPath, templatePath, config, commands;
             return __generator(this, function (_a) {
                 serverClientPath = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, id);
                 templatePath = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.templates.path);
                 config = config_json_1.Bot_Config.Servers_Config.templates.configFile;
-                tempChannels = config_json_1.Bot_Config.Servers_Config.templates.tempChannelsFile;
                 commands = config_json_1.Bot_Config.Servers_Config.templates.commandsFile;
                 fs_1.default.mkdir(serverClientPath, function (err) {
                     if (err)
                         return console.error;
-                    // tempChannels.json
-                    fs_1.default.copyFileSync(path_1.default.join(templatePath, tempChannels), path_1.default.join(serverClientPath, tempChannels));
                     // commands.json
-                    fs_1.default.copyFileSync(path_1.default.join(templatePath, commands), path_1.default.join(serverClientPath, commands));
+                    fs_1.default.copyFile(path_1.default.join(templatePath, commands), path_1.default.join(serverClientPath, commands), function (err) {
+                        if (err)
+                            console.error;
+                    });
                     // config.json
-                    fs_1.default.copyFileSync(path_1.default.join(templatePath, config), path_1.default.join(serverClientPath, config));
+                    fs_1.default.copyFile(path_1.default.join(templatePath, config), path_1.default.join(serverClientPath, config), function (err) {
+                        if (err)
+                            console.error;
+                    });
                 });
                 return [2 /*return*/];
             });

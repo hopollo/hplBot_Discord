@@ -8,9 +8,16 @@ var Mover = /** @class */ (function () {
     }
     Mover.prototype.moveTo = function (target, destination) {
         var _a;
-        // Status : DISCONNECTED: 4
-        if (((_a = target.voice.connection) === null || _a === void 0 ? void 0 : _a.status) !== 4)
-            return target.voice.setChannel(destination);
+        /* Status:
+        CONNECTED: 0
+        CONNECTING: 1
+        AUTHENTICATING: 2
+        RECONNECTING: 3
+        DISCONNECTED: 4
+        */
+        if (((_a = target.voice.connection) === null || _a === void 0 ? void 0 : _a.status) === 0) {
+            target.voice.setChannel(destination).catch(console.error);
+        }
     };
     return Mover;
 }());

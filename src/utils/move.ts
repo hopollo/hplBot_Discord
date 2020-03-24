@@ -11,7 +11,15 @@ export class Mover {
   }
 
   private moveTo(target: GuildMember, destination: VoiceChannel) {
-    // Status : DISCONNECTED: 4
-    if (target.voice.connection?.status !== 4) return target.voice.setChannel(destination);
+    /* Status: 
+    CONNECTED: 0
+    CONNECTING: 1
+    AUTHENTICATING: 2
+    RECONNECTING: 3
+    DISCONNECTED: 4
+    */
+    if (target.voice.connection?.status === 0) {
+      target.voice.setChannel(destination).catch(console.error);
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { Client } from "discord.js";
 import { Bot_Config } from '../../config.json';
 import { ChannelDeleter } from '../utils/deleteChannel';
+import { ServerClient } from "../utils/serverClient";
 
 export function ready(client: Client) {
   const stableMode: boolean = Bot_Config.stable_mode.enabled;
@@ -16,6 +17,5 @@ export function ready(client: Client) {
     client.user!.setActivity(game, {type: 'CUSTOM_STATUS'});
   }
 
-  // Check all "missed" tempChannels to purge them or not if empty
-  new ChannelDeleter().checkUsersBulk(client.guilds);
+  new ServerClient().updateClients(client.guilds);
 }

@@ -52,15 +52,14 @@ var logs_1 = require("./logs");
 var move_1 = require("./move");
 var createInvite_1 = require("./createInvite");
 var ChannelCreator = /** @class */ (function () {
-    function ChannelCreator(msg, name, slots) {
-        this._name = name;
+    function ChannelCreator(msg, slots) {
         this._slots = slots;
         this._msg = msg;
-        this.createNewVoiceChannel(this._msg, this._name, this._slots);
+        this.createNewVoiceChannel(this._msg, this._slots);
     }
-    ChannelCreator.prototype.createNewVoiceChannel = function (msg, channelName, slotsLimit) {
+    ChannelCreator.prototype.createNewVoiceChannel = function (msg, slotsLimit) {
         return __awaiter(this, void 0, void 0, function () {
-            var config, vocalsContainerID, vocalsMaxSlots, reachedMessage, deleteCreationCommand, msgDeleteIdle, moveCreator, shareInvite, allowLogs, newChannel, msgContent;
+            var config, vocalsContainerID, vocalsMaxSlots, reachedMessage, deleteCreationCommand, msgDeleteIdle, moveCreator, shareInvite, allowLogs, channelName, newChannel, msgContent;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, msg.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))); })];
@@ -79,6 +78,8 @@ var ChannelCreator = /** @class */ (function () {
                             return [2 /*return*/, undefined];
                         if (slotsLimit >= vocalsMaxSlots)
                             return [2 /*return*/, msg.reply(reachedMessage)];
+                        channelName = config.Vocals_Options.custom_vocals_titles
+                            .replace('{{user}}', this._msg.author.username);
                         return [4 /*yield*/, msg.guild.channels.create(channelName, {
                                 type: "voice",
                                 userLimit: slotsLimit,

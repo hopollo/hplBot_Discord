@@ -1,4 +1,7 @@
 import fs from 'fs';
+import { Bot_Config } from '../../config.json';
+
+const serverDir = Bot_Config.Servers_Config.servers_path;
 
 export class DataWriter {
   replaceTo(filePath: string, data: string) {

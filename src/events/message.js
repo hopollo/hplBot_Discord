@@ -48,41 +48,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var config_json_1 = require("../../config.json");
-var logs_1 = require("../utils/logs");
-var createChannel_1 = require("../utils/createChannel");
+var defaultCommands_1 = require("../utils/defaultCommands");
 var serverDir = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
-var commandsFile = config_json_1.Bot_Config.Servers_Config.templates.commandsFile;
 function message(msg) {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
-        function compareCommands(fetch) {
-            return __awaiter(this, void 0, void 0, function () {
-                var commands, result, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(serverDir, msg.guild.id, commandsFile))); })];
-                        case 1:
-                            commands = _a.sent();
-                            return [4 /*yield*/, commands.hasOwnProperty(msgContent)];
-                        case 2:
-                            result = _a.sent();
-                            if (!result) return [3 /*break*/, 4];
-                            return [4 /*yield*/, commands[msgContent]];
-                        case 3:
-                            response = _a.sent();
-                            return [2 /*return*/, msg.reply(response)];
-                        case 4: return [2 /*return*/];
-                    }
-                });
-            });
-        }
-        var stableMode, authorUsername, msgContent, commandsPrefix, config, isCommand, invitesChannelID, isInvitesChannel, onlyCommands, onlyCreations, customCommand, slots, customChannelsNamesTemplate;
+        var stableMode, msgContent, commandsPrefix, config, isCommand, invitesChannelID, isInvitesChannel, onlyCommands, onlyCreations;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     stableMode = config_json_1.Bot_Config.stable_mode.enabled;
-                    authorUsername = msg.author.username;
                     msgContent = msg.content.toLowerCase();
                     commandsPrefix = config_json_1.Bot_Config.commands_prefix || '!';
                     return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(serverDir, (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id, configFile))); })];
@@ -93,7 +69,6 @@ function message(msg) {
                     isInvitesChannel = msg.channel.id === invitesChannelID;
                     onlyCommands = config.Channels_Options.invites_channel.allow_only_commands_messages;
                     onlyCreations = config.Channels_Options.invites_channel.allow_only_creation_messages;
-                    customCommand = config.Vocals_Options.creation_command;
                     if (isInvitesChannel && !msg.author.bot && onlyCommands && !isCommand) {
                         if (msg.deletable)
                             return [2 /*return*/, msg.delete({ reason: "Not allowed in this channel" }).catch(console.error)];
@@ -102,43 +77,7 @@ function message(msg) {
                         return [2 /*return*/, undefined];
                     if (!stableMode)
                         return [2 /*return*/, msg.reply('Maintenance en cours du bot, merci de réessayer plus tard.')];
-                    // Create custom size vocals feature
-                    if (msgContent.includes(customCommand)) {
-                        slots = msgContent.replace(customCommand, '');
-                        customChannelsNamesTemplate = config.Vocals_Options.custom_vocals_titles
-                            .replace('{{slots}}', slots)
-                            .replace('{{user}}', authorUsername);
-                        return [2 /*return*/, new createChannel_1.ChannelCreator(msg, customChannelsNamesTemplate, +slots)];
-                    }
-                    switch (msgContent) {
-                        case '!log':
-                            new logs_1.Log(msg.author, msgContent);
-                            break;
-                        case '!hplBot':
-                            msg.reply('HplBot Website : https://hplbot.netlify.com/');
-                            break;
-                        case '!help':
-                            msg.reply('HplBot Commands : https://www.hplbot.netlify.com/discord/commands/hplbot');
-                            break;
-                        case '!hplbot':
-                            msg.reply('HplBot est un bot discord et twitch, créer par @HoPolloTV');
-                            break;
-                        case '!solo':
-                            new createChannel_1.ChannelCreator(msg, authorUsername + " Solo", 1);
-                            break;
-                        case '!duo':
-                            new createChannel_1.ChannelCreator(msg, authorUsername + " Duo", 2);
-                            break;
-                        case '!trio':
-                            new createChannel_1.ChannelCreator(msg, authorUsername + " Trio", 3);
-                            break;
-                        case '!squad':
-                            new createChannel_1.ChannelCreator(msg, authorUsername + " Squad", 5);
-                            break;
-                        default:
-                            compareCommands(true);
-                            break;
-                    }
+                    new defaultCommands_1.Command(msg);
                     return [2 /*return*/];
             }
         });

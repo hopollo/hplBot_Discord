@@ -79,7 +79,7 @@
       "reached_message": "Désolé, les **Customs** sont de **20 pers max**."
     },
     "creation_command": "!custom",
-    "custom_vocals_titles": "{{user}} Custom {{slots}}",
+    "custom_vocals_titles": "{{user}} Custom",
     "move_creator_inside": true
   }
 }

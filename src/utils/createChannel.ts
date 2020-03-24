@@ -6,19 +6,17 @@ import { Mover } from './move';
 import { CreateInvite } from './createInvite';
 
 export class ChannelCreator {
-  private readonly _name: string;
   private readonly _slots: number;
   private readonly _msg : Message;
   
-  constructor(msg: Message, name: string, slots: number) {
-    this._name = name;
+  constructor(msg: Message, slots: number) {
     this._slots = slots;
     this._msg = msg;
 
-    this.createNewVoiceChannel(this._msg, this._name, this._slots);
+    this.createNewVoiceChannel(this._msg, this._slots);
   }
 
-  async createNewVoiceChannel(msg: Message, channelName: string, slotsLimit: number) {
+  async createNewVoiceChannel(msg: Message, slotsLimit: number) {
     const config = await import(path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path, msg.guild!.id, Bot_Config.Servers_Config.templates.configFile));
     const vocalsContainerID: string = config.Vocals_Options.vocals_category_id;
     const vocalsMaxSlots: number = config.Vocals_Options.max_users.count;
@@ -32,6 +30,9 @@ export class ChannelCreator {
     // Issues & security tweaks for custom numbers especially
     if (isNaN(slotsLimit)) return undefined;
     if (slotsLimit >= vocalsMaxSlots) return msg.reply(reachedMessage);
+
+    const channelName = config.Vocals_Options.custom_vocals_titles
+      .replace('{{user}}', this._msg.author.username);
 
     // Generate the temp channel with users specs
     const newChannel = await msg.guild!.channels.create(channelName, {

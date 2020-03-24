@@ -4,6 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = __importDefault(require("fs"));
+var config_json_1 = require("../../config.json");
+var serverDir = config_json_1.Bot_Config.Servers_Config.servers_path;
 var DataWriter = /** @class */ (function () {
     function DataWriter() {
     }

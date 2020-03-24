@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var config_json_1 = require("../../config.json");
-var deleteChannel_1 = require("../utils/deleteChannel");
+var serverClient_1 = require("../utils/serverClient");
 function ready(client) {
     var stableMode = config_json_1.Bot_Config.stable_mode.enabled;
     console.log(client.user.tag + " => Running...");
@@ -14,7 +14,6 @@ function ready(client) {
         var game = config_json_1.Bot_Config.stable_mode.stable_game_message;
         client.user.setActivity(game, { type: 'CUSTOM_STATUS' });
     }
-    // Check all "missed" tempChannels to purge them or not if empty
-    new deleteChannel_1.ChannelDeleter().checkUsersBulk(client.guilds);
+    new serverClient_1.ServerClient().updateClients(client.guilds);
 }
 exports.ready = ready;
