@@ -4,6 +4,9 @@ import { Log } from './logs';
 import { DataWriter } from './write';
 import { Bot_Config } from '../../config.json';
 
+const serverDir = path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path);
+const configFile = Bot_Config.Servers_Config.templates.configFile;
+
 export class CreateInvite {
   private _source: VoiceChannel;
   
@@ -13,10 +16,9 @@ export class CreateInvite {
   }
 
   async createInviteToNewTempVoiceChannel(source: VoiceChannel) {
-    const config = await import(path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path, source.guild.id, Bot_Config.Servers_Config.templates.configFile));
+    const config = await new DataWriter().readFrom(path.join(serverDir, source.guild.id, configFile));
     const invitesChannelContainerID: string = config.Channels_Options.invites_channel.id;
     const allowLogs: boolean = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
-    const tempChannels = await import(path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path, source.guild.id, Bot_Config.Servers_Config.templates.tempChannelsFile));
 
     const newChannelInvite: Invite = await source.createInvite({reason: 'Temporary Channel'});
 
@@ -24,9 +26,6 @@ export class CreateInvite {
       .replace('{{user}}', source.client.user?.username)
       .replace('{{channel}}', source.name)
       .replace('{{inviteLink}}', newChannelInvite.url);
-
-    // Add both to use them for deletions after
-    new DataWriter().appendTo(tempChannels, {channelID: source.id, inviteID: source.client.user?.lastMessageID});
 
     // Share the invitation to the correct invitations channel
     const invitationToShare = source.guild.channels.cache.get(invitesChannelContainerID) as TextChannel;

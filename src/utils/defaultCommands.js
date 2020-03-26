@@ -38,19 +38,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var discord_js_1 = require("discord.js");
 var config_json_1 = require("../../config.json");
 var path_1 = __importDefault(require("path"));
-var write_1 = require("./write");
 var createChannel_1 = require("./createChannel");
+var write_1 = require("./write");
 var serverDir = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 var commandFile = config_json_1.Bot_Config.Servers_Config.templates.commandsFile;
@@ -58,10 +51,10 @@ var Command = /** @class */ (function () {
     function Command(msg) {
         this._msg = msg;
         this._content = msg.content;
-        this._cmd = this._content.split(' ')[0].substr(1).toLowerCase();
+        this._cmd = this._content.toLowerCase().split(' ')[0];
         this._args = this._content.split(' ').slice(1);
-        this._filePath = path_1.default.join(serverDir, msg.id, commandFile);
-        this.processMsg(msg);
+        this.commandsFilePath = path_1.default.join(serverDir, msg.id, commandFile);
+        this.processMsg(this._msg);
     }
     Command.prototype.processMsg = function (msg) {
         var _a;
@@ -71,37 +64,62 @@ var Command = /** @class */ (function () {
                 switch (_c.label) {
                     case 0:
                         _b = this;
-                        return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(serverDir, (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id, configFile))); })];
+                        return [4 /*yield*/, new write_1.DataWriter().readFrom(path_1.default.join(serverDir, (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id, configFile))];
                     case 1:
                         _b._cfg = _c.sent();
-                        customCommand = this._cfg.Vocals_Options.creation_command.substr(1);
+                        customCommand = this._cfg.Vocals_Options.creation_command;
                         switch (this._cmd) {
-                            case 'addcom':
-                                this.addCom(this._args[1], this._args);
+                            case '!addcom':
+                                this.addCom(this._args);
                                 break;
-                            case 'editcom':
-                                this.editCom(this._cmd[1], this._args.toString());
+                            case '!editcom':
+                                this.editCom(this._args);
                                 break;
-                            case 'delcom':
+                            case '!delcom':
                                 this.delCom(this._cmd);
                                 break;
-                            case 'duo':
+                            case '!duo':
                                 new createChannel_1.ChannelCreator(this._msg, 2);
                                 break;
-                            case 'trio':
+                            case '!trio':
                                 new createChannel_1.ChannelCreator(this._msg, 3);
                                 break;
-                            case 'squad':
+                            case '!squad':
                                 new createChannel_1.ChannelCreator(this._msg, 5);
                                 break;
-                            case 'help':
+                            case '!help':
                                 this.help();
                                 break;
                             case customCommand:
                                 this.customChannel(this._cmd, +this._args);
                                 break;
                             default:
-                                msg.reply(this._cmd + " is not a commmand");
+                                this.fecthCommand(this._msg);
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Command.prototype.fecthCommand = function (msg) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var filePath, unknownCommand, unknownCommandMessage, response, msgContent;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        filePath = path_1.default.join(serverDir, (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id, commandFile);
+                        unknownCommand = this._cfg.Commands_Options.enabled;
+                        unknownCommandMessage = this._cfg.Commands_Options.message;
+                        return [4 /*yield*/, new write_1.DataWriter().findInto(filePath, this._cmd)];
+                    case 1:
+                        response = _b.sent();
+                        if (response)
+                            return [2 /*return*/, msg.reply(response)];
+                        if (unknownCommand) {
+                            msgContent = unknownCommandMessage
+                                .replace('{{command}}', this._cmd);
+                            msg.reply(msgContent);
                         }
                         return [2 /*return*/];
                 }
@@ -110,28 +128,27 @@ var Command = /** @class */ (function () {
     };
     Command.prototype.help = function () {
         var helpEmbed = new discord_js_1.MessageEmbed()
-            .setAuthor('Commands :')
+            .setAuthor('HplBot Commands :')
             .addField('Create a command', '!addcom !hi Hello there')
-            .addField('Edit a command', '!editcom !hi Bonjour!')
+            .addField('Edit a command', '!editcom !hi Bonjour !')
             .addField('Delete a command', '!delcom !hi')
             .addField('Create a channel', '!duo, !trio, !squad, !custom NUMBER')
             .setFooter('more info on twitter @HoPolloTV');
         this._msg.reply(helpEmbed);
     };
-    Command.prototype.addCom = function (cmd, response) {
-        return this._msg.reply('soon');
-        var argsToString = response.slice(1).toString();
-        var reply = "{ \"" + cmd + "\": \"" + argsToString + "\" }";
-        console.log(reply);
-        new write_1.DataWriter().appendTo(this._filePath, reply);
+    Command.prototype.addCom = function (args) {
+        var command = args.slice(1)[0];
+        var resp = args.slice(2);
+        new write_1.DataWriter().appendTo(this.commandsFilePath, { command: command, resp: resp });
     };
     Command.prototype.delCom = function (cmd) {
         return this._msg.reply('soon');
-        new write_1.DataWriter().removeTo(this._filePath, cmd);
+        new write_1.DataWriter().removeTo(this.commandsFilePath, cmd);
     };
-    Command.prototype.editCom = function (cmd, data) {
-        return this._msg.reply('soon');
-        new write_1.DataWriter().replaceTo(this._filePath, data);
+    Command.prototype.editCom = function (args) {
+        var command = args.slice(1)[0];
+        var resp = args.slice(2);
+        new write_1.DataWriter().replaceTo(this.commandsFilePath, { command: command, resp: resp });
     };
     Command.prototype.customChannel = function (cmd, slots) {
         new createChannel_1.ChannelCreator(this._msg, slots);

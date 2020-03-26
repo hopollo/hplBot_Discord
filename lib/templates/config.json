@@ -1,4 +1,8 @@
 {
+  "Commands_Options": {
+    "enabled": false,
+    "message": "{{command}} is not a command, try **!help**"
+  },
   "Twitch_Bots_Config": {
     "Fossabot": { "username": "", "enabled": false },
     "Moobot": { "username": "", "enabled": false },

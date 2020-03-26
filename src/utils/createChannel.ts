@@ -4,6 +4,10 @@ import { Message, VoiceChannel } from 'discord.js';
 import { Log } from './logs';
 import { Mover } from './move';
 import { CreateInvite } from './createInvite';
+import { DataWriter } from './write';
+
+const serverDir = path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path);
+const configFile = Bot_Config.Servers_Config.templates.configFile;
 
 export class ChannelCreator {
   private readonly _slots: number;
@@ -17,7 +21,7 @@ export class ChannelCreator {
   }
 
   async createNewVoiceChannel(msg: Message, slotsLimit: number) {
-    const config = await import(path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path, msg.guild!.id, Bot_Config.Servers_Config.templates.configFile));
+    const config = await new DataWriter().readFrom(path.join(serverDir, msg.guild!.id, configFile));
     const vocalsContainerID: string = config.Vocals_Options.vocals_category_id;
     const vocalsMaxSlots: number = config.Vocals_Options.max_users.count;
     const reachedMessage: string = config.Vocals_Options.max_users.reached_message;

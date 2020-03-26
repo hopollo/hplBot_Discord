@@ -3,10 +3,10 @@ import path = require('path');
 import { Log } from './logs';
 import { VoiceChannel, GuildManager } from 'discord.js';
 import { Bot_Config } from '../../config.json';
+import { DataWriter } from './write';
 
 const serverDir = path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path);
 const configFile = Bot_Config.Servers_Config.templates.configFile;
-const tempChannelsFile = Bot_Config.Servers_Config.templates.tempChannelsFile;
 
 export class ChannelDeleter {
   public async checkUsersOf(channel: VoiceChannel) {
@@ -19,7 +19,7 @@ export class ChannelDeleter {
     
   public checkUsersBulk(guild: GuildManager) {
     guild!.cache.forEach(async g => {
-      const config = await import(path.join(serverDir, g.id, configFile));
+      const config = await new DataWriter().readFrom(path.join(serverDir, g.id, configFile));
       const tempChannelsContainerID = config.Vocals_Options.vocals_category_id;
       const tempChannel = g.channels.cache.filter(c => c.type === "voice" && c.parentID === tempChannelsContainerID);
       tempChannel.forEach(c => {

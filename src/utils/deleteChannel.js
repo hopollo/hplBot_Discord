@@ -46,9 +46,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
 var logs_1 = require("./logs");
 var config_json_1 = require("../../config.json");
+var write_1 = require("./write");
 var serverDir = path.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
-var tempChannelsFile = config_json_1.Bot_Config.Servers_Config.templates.tempChannelsFile;
 var ChannelDeleter = /** @class */ (function () {
     function ChannelDeleter() {
     }
@@ -76,7 +76,7 @@ var ChannelDeleter = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path.join(serverDir, g.id, configFile))); })];
+                    case 0: return [4 /*yield*/, new write_1.DataWriter().readFrom(path.join(serverDir, g.id, configFile))];
                     case 1:
                         config = _a.sent();
                         tempChannelsContainerID = config.Vocals_Options.vocals_category_id;

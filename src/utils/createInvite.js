@@ -38,52 +38,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var logs_1 = require("./logs");
 var write_1 = require("./write");
 var config_json_1 = require("../../config.json");
+var serverDir = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path);
+var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 var CreateInvite = /** @class */ (function () {
     function CreateInvite(channelSource) {
         this._source = channelSource;
         this.createInviteToNewTempVoiceChannel(this._source);
     }
     CreateInvite.prototype.createInviteToNewTempVoiceChannel = function (source) {
-        var _a, _b, _c;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var config, invitesChannelContainerID, allowLogs, tempChannels, newChannelInvite, inviteLink, invitationToShare, author, msgContent;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
-                    case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, source.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))); })];
+            var config, invitesChannelContainerID, allowLogs, newChannelInvite, inviteLink, invitationToShare, author, msgContent;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0: return [4 /*yield*/, new write_1.DataWriter().readFrom(path_1.default.join(serverDir, source.guild.id, configFile))];
                     case 1:
-                        config = _d.sent();
+                        config = _c.sent();
                         invitesChannelContainerID = config.Channels_Options.invites_channel.id;
                         allowLogs = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
-                        return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, source.guild.id, config_json_1.Bot_Config.Servers_Config.templates.tempChannelsFile))); })];
-                    case 2:
-                        tempChannels = _d.sent();
                         return [4 /*yield*/, source.createInvite({ reason: 'Temporary Channel' })];
-                    case 3:
-                        newChannelInvite = _d.sent();
+                    case 2:
+                        newChannelInvite = _c.sent();
                         inviteLink = config.Channels_Options.invites_channel.invite_links_message
                             .replace('{{user}}', (_a = source.client.user) === null || _a === void 0 ? void 0 : _a.username)
                             .replace('{{channel}}', source.name)
                             .replace('{{inviteLink}}', newChannelInvite.url);
-                        // Add both to use them for deletions after
-                        new write_1.DataWriter().appendTo(tempChannels, { channelID: source.id, inviteID: (_b = source.client.user) === null || _b === void 0 ? void 0 : _b.lastMessageID });
                         invitationToShare = source.guild.channels.cache.get(invitesChannelContainerID);
                         if (invitationToShare)
                             return [2 /*return*/, invitationToShare.send(inviteLink)];
                         author = source.client.user;
                         msgContent = config.Channels_Options.logs_channel.logs_options.channels_creations.message
-                            .replace('{{user}}', (_c = author) === null || _c === void 0 ? void 0 : _c.username)
+                            .replace('{{user}}', (_b = author) === null || _b === void 0 ? void 0 : _b.username)
                             .replace('{{channel}}', source.name);
                         if (allowLogs)
                             new logs_1.Log(author, msgContent);
