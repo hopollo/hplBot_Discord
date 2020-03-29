@@ -21,6 +21,7 @@ export class Scrapper {
     this._msg = msg;
     this._cmd = cmd;
     this._id = guildID;
+    this._username = "";
     this.init();
   }
 
