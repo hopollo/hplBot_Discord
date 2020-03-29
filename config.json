@@ -16,10 +16,10 @@
       }
     },
     "Fossabot_Config": {
-      "commands_url": "https://fossabot.com/commands/"
+      "commands_url": "https://fossabot.com/commands/{{user}}"
     },
     "StreamElements_Config": {
-      "commands_url": "https://streamelements.com/commands/"
+      "commands_url": "https://streamelements.com/{{user}}/commands/"
     },
     "StreamLabs_Config": {
       "commands_url": "https://streamlabs.com/commands/"
