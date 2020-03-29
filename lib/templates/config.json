@@ -4,12 +4,13 @@
     "message": "{{command}} is not a command, try **!help**"
   },
   "Twitch_Bots_Config": {
-    "Fossabot": { "username": "", "enabled": false },
-    "Moobot": { "username": "", "enabled": false },
-    "Nightbot": { "username": "", "enabled": false },
-    "StreamElements": { "username": "", "enabled": false },
-    "StreamLabs": { "username": "", "enabled": false },
-    "Wizzbot": { "username": "", "enabled": false }
+    "username": "hopollo",
+    "Fossabot": false,
+    "Moobot": false,
+    "Nightbot": false,
+    "StreamElements": false,
+    "StreamLabs": false,
+    "Wizzbot": false
   },
   "Channels_Options": {
     "welcome_channel": {

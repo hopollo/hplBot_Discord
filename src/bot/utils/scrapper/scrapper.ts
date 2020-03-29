@@ -15,6 +15,7 @@ export class Scrapper {
   private _id: string;
   private _cmd: string;
   private _cfg: any;
+  private _username: string;
 
   constructor(msg: Message, guildID: string, cmd: string) {
     this._msg = msg;
@@ -25,36 +26,33 @@ export class Scrapper {
 
   private async init() {
     this._cfg = await new DataWriter().read(path.join(serverDir, this._id, configFile));
+    this._username = this._cfg.Twitch_Bots_Config.username;
 
     this._msg.react("⌛");
 
-    if (this._cfg.Twitch_Bots_Config.Fossabot.enabled) this.fossabot();
-    if (this._cfg.Twitch_Bots_Config.StreamElements.enabled) this.streamelements();
-    if (this._cfg.Twitch_Bots_Config.Nightbot.enabled) this.nightbot();
-    if (this._cfg.Twitch_Bots_Config.Moobot.enabled) this.moobot();
+    if (this._cfg.Twitch_Bots_Config.Fossabot) this.fossabot();
+    if (this._cfg.Twitch_Bots_Config.StreamElements) this.streamelements();
+    if (this._cfg.Twitch_Bots_Config.Nightbot) this.nightbot();
+    if (this._cfg.Twitch_Bots_Config.Moobot) this.moobot();
   }
 
   private fossabot() {
-    const user = this._cfg.Twitch_Bots_Config.Fossabot.username;
-    const url = Bot_Config.Fossabot_Config.replace('{{user}}', user);
+    const url = Bot_Config.Fossabot_Config.replace('{{user}}', this._username);
     new FossabotScrapper(this._msg, url, this._cmd);
   }
 
   private streamelements() {
-    const user: string = this._cfg.Twitch_Bots_Config.StreamElements.username;
-    const url = Bot_Config.StreamElements_Config.replace('{{user}}', user);
+    const url = Bot_Config.StreamElements_Config.replace('{{user}}', this._username);
     new StreamElementsScrapper(this._msg, url, this._cmd);
   }
 
   private nightbot() {
-    const user: string = this._cfg.Twitch_Bots_Config.Nightbot.username;
-    const url = Bot_Config.Nightbot_Config.replace('{{user}}', user);
+    const url = Bot_Config.Nightbot_Config.replace('{{user}}', this._username);
     new NightbotScrapper(this._msg, url, this._cmd);
   }
 
   private moobot() {
-    const user: string = this._cfg.Twitch_Bots_Config.Moobot.username;
-    const url = Bot_Config.Moobot_Config.replace('{{user}}', user);
+    const url = Bot_Config.Moobot_Config.replace('{{user}}', this._username);
     new MoobotScrapper(this._msg, url, this._cmd);
   }
 }
