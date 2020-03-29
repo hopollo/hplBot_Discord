@@ -15,14 +15,10 @@
         "commandsFile": "commands.json"
       }
     },
-    "Fossabot_Config": {
-      "commands_url": "https://fossabot.com/commands/{{user}}"
-    },
-    "StreamElements_Config": {
-      "commands_url": "https://streamelements.com/{{user}}/commands/"
-    },
-    "StreamLabs_Config": {
-      "commands_url": "https://streamlabs.com/commands/"
-    }
+    "Fossabot_Config": "https://fossabot.com/commands/{{user}}",
+    "StreamElements_Config": "https://streamelements.com/{{user}}/commands/",
+    "StreamLabs_Config": "https://streamlabs.com/commands/",
+    "Nightbot_Config": "https://nightbot.tv/t/{{user}}/commands",
+    "Moobot_Config": "https://moo.bot/r/commands#{{user}}"
   }
 }

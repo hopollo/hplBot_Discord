@@ -106,18 +106,20 @@ var Command = /** @class */ (function () {
         });
     };
     Command.prototype.fecthCommand = function (msg) {
-        var _a;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var filePath, unknownCommand, unknownCommandMessage, response, msgContent;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        filePath = path_1.default.join(serverDir, (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id, commandFile);
+                        if (!((_a = msg.member) === null || _a === void 0 ? void 0 : _a.hasPermission("MANAGE_GUILD")))
+                            return [2 /*return*/, msg.reply("Sorry, you'r not allowed.")];
+                        filePath = path_1.default.join(serverDir, (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id, commandFile);
                         unknownCommand = this._cfg.Commands_Options.enabled;
                         unknownCommandMessage = this._cfg.Commands_Options.message;
                         return [4 /*yield*/, new write_1.DataWriter().findInto(filePath, this._cmd)];
                     case 1:
-                        response = _b.sent();
+                        response = _c.sent();
                         if (response)
                             return [2 /*return*/, msg.reply(response)];
                         if (unknownCommand) {
@@ -136,10 +138,13 @@ var Command = /** @class */ (function () {
     Command.prototype.help = function () {
         var helpEmbed = new discord_js_1.MessageEmbed()
             .setAuthor('HplBot Commands :')
-            .addField('Create a command', '!addcom !hi Hello there')
-            .addField('Edit a command', '!editcom !hi Bonjour !')
-            .addField('Delete a command', '!delcom !hi')
-            .addField('Create a channel', '!duo, !trio, !squad, !custom NUMBER')
+            //.addField('Create a command, overrides existing from (!scrap)', '!addcom !hi Hello there')
+            //.addField('Edit a command', '!editcom !hi Bonjour !')
+            //.addField('Delete a command', '!delcom !hi')
+            .addField('Always ignore a command from (!scrap)', '!bancom !setgame')
+            //.addField('Protects a command from override with (!scrap)', '!lockcom !followage')
+            .addField('Copy all twitch chat bot commands & override currents', '!scrap')
+            .addField('Creates a channel', '!duo, !trio, !squad, !custom NUMBER')
             .setFooter('more info on twitter @HoPolloTV');
         this._msg.reply(helpEmbed);
     };

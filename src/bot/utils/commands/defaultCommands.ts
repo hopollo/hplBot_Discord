@@ -49,6 +49,8 @@ export class Command {
   }
 
   private async fecthCommand(msg: Message) {
+    if (!msg.member?.hasPermission("MANAGE_GUILD")) return msg.reply(`Sorry, you'r not allowed.`);
+
     const filePath = path.join(serverDir, msg.guild?.id!, commandFile);
 
     const unknownCommand = this._cfg.Commands_Options.enabled;
@@ -72,10 +74,13 @@ export class Command {
   private help() {
     const helpEmbed = new MessageEmbed()
       .setAuthor('HplBot Commands :')
-      .addField('Create a command', '!addcom !hi Hello there')
-      .addField('Edit a command', '!editcom !hi Bonjour !')
-      .addField('Delete a command', '!delcom !hi')
-      .addField('Create a channel', '!duo, !trio, !squad, !custom NUMBER')
+      //.addField('Create a command, overrides existing from (!scrap)', '!addcom !hi Hello there')
+      //.addField('Edit a command', '!editcom !hi Bonjour !')
+      //.addField('Delete a command', '!delcom !hi')
+      .addField('Always ignore a command from (!scrap)', '!bancom !setgame')
+      //.addField('Protects a command from override with (!scrap)', '!lockcom !followage')
+      .addField('Copy all twitch chat bot commands & override currents', '!scrap')
+      .addField('Creates a channel', '!duo, !trio, !squad, !custom NUMBER')
       .setFooter('more info on twitter @HoPolloTV');
     this._msg.reply(helpEmbed);
   }

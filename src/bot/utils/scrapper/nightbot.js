@@ -45,14 +45,14 @@ var config_json_1 = require("../../../../config.json");
 var puppeteer_1 = __importDefault(require("puppeteer"));
 var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var commandsFile = config_json_1.Bot_Config.Servers_Config.templates.commandsFile;
-var FossabotScrapper = /** @class */ (function () {
-    function FossabotScrapper(msg, url, cmd) {
+var NightbotScrapper = /** @class */ (function () {
+    function NightbotScrapper(msg, url, cmd) {
         this._msg = msg;
         this._url = url;
         this._cmd = cmd;
         this.fetchBotCommands();
     }
-    FossabotScrapper.prototype.fetchBotCommands = function () {
+    NightbotScrapper.prototype.fetchBotCommands = function () {
         return __awaiter(this, void 0, void 0, function () {
             var getData;
             var _this = this;
@@ -70,16 +70,13 @@ var FossabotScrapper = /** @class */ (function () {
                                 return [4 /*yield*/, page.goto(this._url)];
                             case 3:
                                 _a.sent();
-                                return [4 /*yield*/, page.waitForSelector('tr.jss139', { visible: true })];
+                                return [4 /*yield*/, page.waitForSelector('tr', { visible: true })];
                             case 4:
                                 _a.sent();
                                 return [4 /*yield*/, page.evaluate(function () {
-                                        return Array.from(document.querySelectorAll('tr.jss139'))
+                                        return Array.from(document.querySelectorAll('tr'))
                                             .map(function (i) { return i.children; })
-                                            .reduce(function (a, b) { return (a[b[0].innerHTML] = b[1].innerHTML
-                                            .replace('/me', '').slice(1)
-                                            .replace('$(sender)', '').slice(1),
-                                            a); }, {});
+                                            .reduce(function (a, b) { return (a[b[0].innerHTML] = b[1].innerHTML.replace('/me', '').slice(1), a); }, {});
                                     })];
                             case 5:
                                 result = _a.sent();
@@ -121,6 +118,6 @@ var FossabotScrapper = /** @class */ (function () {
             });
         });
     };
-    return FossabotScrapper;
+    return NightbotScrapper;
 }());
-exports.FossabotScrapper = FossabotScrapper;
+exports.NightbotScrapper = NightbotScrapper;

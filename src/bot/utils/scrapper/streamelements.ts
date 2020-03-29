@@ -31,7 +31,7 @@ export class StreamElementsScrapper {
       const result = await page.evaluate(() => {
         return Array.from(document.querySelectorAll('tr.md-row'))
                     .map(i => i.children)
-                    .reduce((a,b) => (a[b[0].innerHTML.slice(0, -1)]= b[1].innerHTML, a), {});
+                    .reduce((a: any, b: any) => (a[b[0].innerHTML.slice(0, -1)] = b[1].innerHTML.replace('/me','').slice(1), a), {});
       });
       
       await browser.close();

@@ -1,6 +1,6 @@
 TODO:  
 [X] Modularise everything  
-[X] Find & fix issue when move event return empty oldChannel (source)  
+[...] Find & fix issue when move event return empty oldChannel (source)  
 [...] Move user even if not connected to voiceChannel before  
 [X] Finish logs  
 [] Makes dedicated lang file with all phrases instead of JSON  
@@ -11,12 +11,13 @@ TODO:
   [ ] !addcom CMD RESPONSE
   [ ] !delcom CMD
   [ ] !editcom CMD RESPONSE_EDITED
-  [ ] !deletemsg NUMBER
+  [ ] !purge NUMBER
+  [ ] !bancom CMD
 [ ] Scrapping commands feature  
-  [ ] Add scrapping from streamElements  
+  [X] Add scrapping from streamElements  
   [ ] Add scrapping from streaLabs  
-  [ ] Add scrapping from Nightbot  
-  [ ] Add scrapping from Moobot  
+  [X] Add scrapping from Nightbot  
+  [X] Add scrapping from Moobot  
   [ ] Add scrapping from Wizebot  
   [X] Add scrapping from Fossabot  
 

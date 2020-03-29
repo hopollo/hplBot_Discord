@@ -44,6 +44,8 @@ var config_json_1 = require("../../../../config.json");
 var write_1 = require("../data/write");
 var fossabot_1 = require("./fossabot");
 var streamelements_1 = require("./streamelements");
+var nightbot_1 = require("./nightbot");
+var moobot_1 = require("./moobot");
 var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 var Scrapper = /** @class */ (function () {
@@ -70,6 +72,8 @@ var Scrapper = /** @class */ (function () {
                             this.streamelements();
                         if (this._cfg.Twitch_Bots_Config.Nightbot.enabled)
                             this.nightbot();
+                        if (this._cfg.Twitch_Bots_Config.Moobot.enabled)
+                            this.moobot();
                         return [2 /*return*/];
                 }
             });
@@ -77,17 +81,23 @@ var Scrapper = /** @class */ (function () {
     };
     Scrapper.prototype.fossabot = function () {
         var user = this._cfg.Twitch_Bots_Config.Fossabot.username;
-        var url = config_json_1.Bot_Config.Fossabot_Config.commands_url.replace('{{user}}', user);
+        var url = config_json_1.Bot_Config.Fossabot_Config.replace('{{user}}', user);
         new fossabot_1.FossabotScrapper(this._msg, url, this._cmd);
     };
     Scrapper.prototype.streamelements = function () {
         var user = this._cfg.Twitch_Bots_Config.StreamElements.username;
-        var url = config_json_1.Bot_Config.StreamElements_Config.commands_url.replace('{{user}}', user);
+        var url = config_json_1.Bot_Config.StreamElements_Config.replace('{{user}}', user);
         new streamelements_1.StreamElementsScrapper(this._msg, url, this._cmd);
     };
     Scrapper.prototype.nightbot = function () {
         var user = this._cfg.Twitch_Bots_Config.Nightbot.username;
-        //const url = Bot_Config..commands_url.replace('{{user}}', user);
+        var url = config_json_1.Bot_Config.Nightbot_Config.replace('{{user}}', user);
+        new nightbot_1.NightbotScrapper(this._msg, url, this._cmd);
+    };
+    Scrapper.prototype.moobot = function () {
+        var user = this._cfg.Twitch_Bots_Config.Moobot.username;
+        var url = config_json_1.Bot_Config.Moobot_Config.replace('{{user}}', user);
+        new moobot_1.MoobotScrapper(this._msg, url, this._cmd);
     };
     return Scrapper;
 }());

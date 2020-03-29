@@ -7,7 +7,7 @@ import puppeteer from 'puppeteer';
 const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
 const commandsFile = Bot_Config.Servers_Config.templates.commandsFile;
 
-export class FossabotScrapper {
+export class NightbotScrapper {
   private _msg: Message;
   private _url: string;
   private _cmd: string;
@@ -25,24 +25,22 @@ export class FossabotScrapper {
       const page = await browser.newPage();
 
       await page.goto(this._url);
-      await page.waitForSelector('tr.jss139', { visible: true});
+      
+      await page.waitForSelector('tr', { visible: true });
 
       const result = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('tr.jss139'))
+        return Array.from(document.querySelectorAll('tr'))
                     .map(i => i.children)
-                    .reduce((a: any, b: any) => (a[b[0].innerHTML] = b[1].innerHTML
-                        .replace('/me','').slice(1)
-                        .replace('$(sender)','').slice(1), 
-                    a), {});
+                    .reduce((a: any, b: any) => (a[b[0].innerHTML] = b[1].innerHTML.replace('/me','').slice(1), a), {});
       });
-
+      
       await browser.close();
       return result;
     }
 
     getData()
-      .then(async (data) => {
-        new DataWriter().replaceTo(path.join(serverDir, this._msg.guild?.id!, commandsFile), data);
+      .then(async (data) => { 
+        new DataWriter().replaceTo(path.join(serverDir, this._msg.guild?.id!, commandsFile), data)
         this._msg.reactions.removeAll();
         await this._msg.react("✔️");
       })
