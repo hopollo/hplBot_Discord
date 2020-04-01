@@ -6,10 +6,8 @@ require('dotenv').config();
 
 const app = express();
 
-/*
 const { HplBot } = require('./bot/utils/core/bot');
 new HplBot().start(process.env.BOT_TOKEN);
-*/
 
 app.set('views', path.join(__dirname, 'interface', 'views'));
 app.set('view engine', 'ejs');

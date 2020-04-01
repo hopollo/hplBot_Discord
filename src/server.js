@@ -8,10 +8,8 @@ var path_1 = __importDefault(require("path"));
 var router_1 = __importDefault(require("./interface/routers/router"));
 require('dotenv').config();
 var app = express_1.default();
-/*
-const { HplBot } = require('./bot/utils/core/bot');
+var HplBot = require('./bot/utils/core/bot').HplBot;
 new HplBot().start(process.env.BOT_TOKEN);
-*/
 app.set('views', path_1.default.join(__dirname, 'interface', 'views'));
 app.set('view engine', 'ejs');
 app.use(express_1.default.static(path_1.default.join(__dirname, 'interface', 'public')));
