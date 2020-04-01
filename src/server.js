@@ -1,26 +1,25 @@
 "use strict";
-var express = require('express');
-var path = require('path');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = __importDefault(require("express"));
+var path_1 = __importDefault(require("path"));
+var router_1 = __importDefault(require("./interface/routers/router"));
 require('dotenv').config();
-var app = express();
-var router = express.Router();
-var HplBot = require('./bot/utils/core/bot').HplBot;
+var app = express_1.default();
+/*
+const { HplBot } = require('./bot/utils/core/bot');
 new HplBot().start(process.env.BOT_TOKEN);
-app.use(express.static('public'));
-app.use('/', function (req, res) {
-    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-});
-router.get('/try', function (req, res) {
-    console.log('try request');
-    res.redirect('https://discordapp.com/oauth2/authorize?client_id=682969119406293002&scope=bot');
-});
-router.get('/login', function (req, res) {
-    console.log('login request');
-    res.redirect('https://discordapp.com/api/oauth2/authorize?client_id=682969119406293002&redirect_uri=https%3A%2F%2Fhplbotdiscord.herokuapp.com%2Fcommands%2F&response_type=code&scope=identify%20guilds');
-});
-app.use('/commands', function (req, res) {
-    console.log(req.body);
-});
+*/
+app.set('views', path_1.default.join(__dirname, 'interface', 'views'));
+app.set('view engine', 'ejs');
+app.use(express_1.default.static(path_1.default.join(__dirname, 'interface', 'public')));
+app.use(express_1.default.json());
+app.use('/', router_1.default);
+app.use('/try', router_1.default);
+app.use('/login', router_1.default);
+app.use('/commands/:user', router_1.default);
 app.listen(process.env.PORT || 5000, function () {
     console.log('Web interface => Running...');
 });

@@ -28,10 +28,6 @@ getItButton.onmouseenter = () => {
 getItButton.onmouseleave = () => {
   getItButton.innerText = "GET IT";
 }
-getItButton.onclick = () => {
-  console.log('try button');
-  fetch('try').then(res => console.log(res.text())).catch(console.error);
-}
 
 //LOG IN BUTTON
 loginButton.onmouseenter = () => {
@@ -39,9 +35,5 @@ loginButton.onmouseenter = () => {
 }
 loginButton.onmouseleave = () => {
   loginButton.innerText = "LOG IN";
-}
-loginButton.onclick = () => {
-  console.log('login button');
-  fetch('login').then(res => console.log(res.text())).catch(console.error);
 }
 
