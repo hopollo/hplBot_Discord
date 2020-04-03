@@ -1,3 +1,10 @@
+window.onload = () => {
+  document.querySelector('.loader').style.display = 'none';
+  document.querySelector('.wrapper').style.display = 'flex';
+
+  StartSliding();
+}
+
 function StartSliding() {
   const interval = 3; //seconds
   let currentSection = 0;
@@ -13,10 +20,6 @@ function StartSliding() {
     feature[currentSection].className = 'current';
   }
 }
-
-StartSliding();
-
-// TODO: (HoPollo): change this to something more "pro"
 
 const getItButton = document.querySelector('.getItButton');
 const loginButton = document.querySelector('.loginButton');

@@ -40,17 +40,7 @@ router.get('/', (req, res) => {
   </div>
   `
 
-  res.render('layout', { title: "Welcome", app: data });
-});
-
-router.get('/try', (req, res) => {
-  console.log('try');
-  res.redirect('https://discordapp.com/oauth2/authorize?client_id=682969119406293002&scope=bot');
-});
-
-router.get('/login', (req, res) => {
-  console.log('login');
-  res.redirect('https://discordapp.com/api/oauth2/authorize?client_id=682969119406293002&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fcallback&response_type=code&scope=identify%20guilds');
+  res.render('index', { title: "Welcome", app: data });
 });
 
 router.get('/callback', async (req, res) => {
@@ -75,8 +65,17 @@ router.get('/callback', async (req, res) => {
     body: new URLSearchParams(data),
     redirect: "follow"
   })
-	.then(res => res.json())
+  .then(res => res.json())
   .catch(err => res.send(err));
+
+  //TODO (hopollo) : Try to implement somthing to avoid reOauth all the time
+  //console.log(request);
+
+  /*
+  fs.writeFile(path.join(__dirname, '../../..', 'lib', 'oauths'), requestData, (err) => {
+    if (err) console.error;
+  });
+  */
 
   const result = await fetch('https://discordapp.com/api/v6/users/@me', {
 		headers: {
@@ -86,17 +85,6 @@ router.get('/callback', async (req, res) => {
   .then(res => res.json())
   .catch(console.error);
 
-  /* TODO: Fix Auth issue
-  const user = await fetch(`https://discordapp.com/api/v6/users/${result.id}`, {
-    headers: {
-			authorization: `${request.token_type} ${request.access_token}`,
-		},
-  })
-  .then(res => res.json())
-  .then(console.log)
-  .catch(console.error);
-  */
-
   const guilds = await fetch('https://discordapp.com/api/v6/users/@me/guilds', {
     headers: {
 			authorization: `${request.token_type} ${request.access_token}`,
@@ -105,19 +93,31 @@ router.get('/callback', async (req, res) => {
   .then(res => res.json())
   // TODO: Sort by name alphabetic
   .then(guilds => Array.from(guilds).filter((g: any) => g.owner === true))
+  // TODO: Exclude owned guilds that are not "servers" of hplBot
+  /*
+  .then((ownedGuilds: any) => {
+    let server = [];
+    const exists = fs.existsSync(path.join(__dirname, '../../..', 'lib', 'servers', ownedGuilds.id))
+    if (!exists) return;
+    server.push(ownedGuilds);
+  })
+  */
   .catch(console.error);
 
   const htmlData = `
-    <h1>Hey ${result.username} !</h1>
-    <p>this page is still under construction, stay tuned !</p>
+    <div class="controls">
+      <button class="default">COMMANDS</button>
+      <button class="default">CONFIG</button>
+    </div>
   `;
 
   const userData = {
     title: result.username,
-    userImage: `<img src="https://cdn.discordapp.com/${result.avatar}.png">`,
+    userImage: `<img src="https://cdn.discordapp.com/avatars/${result.id}/${result.avatar}.webp">`,
     servers: guilds,
     username: result.username,
-    app: htmlData
+    app: htmlData,
+    styleEl: 'display { none }'
   }
 
   res.render('user', userData);
@@ -125,40 +125,15 @@ router.get('/callback', async (req, res) => {
   //res.redirect(`/${result.username.toLowerCase()}`);
 });
 
-/*
-router.get('/:user', (req, res) => {
-  res.render('user');
-});
-*/
-
-router.get('/guild/:guildID/:type', async (req, res) => {
+router.get('/:guildID', async (req, res) => {
   const guildID = req.params.guildID;
-  const reqType = req.params.type;
 
   const guildPath = path.join(__dirname, '../../..', 'lib', 'servers', guildID);
 
-  if (reqType == 'config') {
-    const config = fs.createReadStream(guildPath + '/config.json');
-
-    config.on('data', (chunck) => {
-      config.pipe(res.json(JSON.parse(chunck)));
-    });
-
-    config.on('error', (err) => {
-      res.end(err);
-    });
-  } 
-  else {
-    const commands = fs.createReadStream(guildPath + '/commands.json');
-
-    commands.on('data', (chunk) => {
-      commands.pipe(res.json(JSON.parse(chunk)));
-    });
+  const config = JSON.parse(fs.readFileSync(guildPath + '/config.json', 'utf8'));
+  const commands = JSON.parse(fs.readFileSync(guildPath + '/commands.json', 'utf8'));
   
-    commands.on('error', (err) => {
-      res.end(err);
-    });
-  }  
+  res.json({config, commands});
 });
 
 export default router;
