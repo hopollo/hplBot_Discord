@@ -55,15 +55,7 @@ require('dotenv').config();
 var router = express_1.Router();
 router.get('/', function (req, res) {
     var data = "\n  <div class=\"top\">\n    <div class=\"header\">\n      <main>\n        <h1><p><span>HplBot</span></p> <span>for</span> <span>Discord</span> <span>!</span></h1>\n      </main>\n      <div class=\"controls\">\n        <a href=\"https://discordapp.com/oauth2/authorize?client_id=682969119406293002&scope=bot\" title=\"Call it\"><button class=\"getItButton\">GET IT</button></a>\n        <a href=\"https://discordapp.com/api/oauth2/authorize?client_id=682969119406293002&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fcallback&response_type=code&scope=guilds%20identify\" title=\"Connect\"><button class=\"loginButton\">LOG IN</button></a>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"center\">\n    <ul class=\"features\">\n      <li>Automaticly use Twitch bot commands</li>\n      <li>Get usefull logs in dedicated log channel</li>\n      <li>Hplbot will always be <strong>Free</strong></li>\n      <li>Open-source project</li>\n      <li>Self-hosted, ready to use</li>\n      <li>One-click setup</li>\n      <li>Phrase customizations</li>\n      <li>Manage roles</li>\n      <li>Manage channels</li>\n      <li>Creates temporary channels</li>\n      <li>Clears temporary channels when empty</li>\n    </ul>\n  </div>\n  ";
-    res.render('layout', { title: "Welcome", app: data });
-});
-router.get('/try', function (req, res) {
-    console.log('try');
-    res.redirect('https://discordapp.com/oauth2/authorize?client_id=682969119406293002&scope=bot');
-});
-router.get('/login', function (req, res) {
-    console.log('login');
-    res.redirect('https://discordapp.com/api/oauth2/authorize?client_id=682969119406293002&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fcallback&response_type=code&scope=identify%20guilds');
+    res.render('index', { title: "Welcome", app: data });
 });
 router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var obj, data, request, result, guilds, htmlData, userData;
@@ -110,13 +102,22 @@ router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, v
                         .then(function (res) { return res.json(); })
                         // TODO: Sort by name alphabetic
                         .then(function (guilds) { return Array.from(guilds).filter(function (g) { return g.owner === true; }); })
+                        // TODO: Exclude owned guilds that are not "servers" of hplBot
+                        /*
+                        .then((ownedGuilds: any) => {
+                          let server = [];
+                          const exists = fs.existsSync(path.join(__dirname, '../../..', 'lib', 'servers', ownedGuilds.id))
+                          if (!exists) return;
+                          server.push(ownedGuilds);
+                        })
+                        */
                         .catch(console.error)];
             case 3:
                 guilds = _a.sent();
-                htmlData = "\n    <h1>Hey " + result.username + " !</h1>\n    <p>this page is still under construction, stay tuned !</p>\n  ";
+                htmlData = "\n    <div class=\"controls\">\n      <button class=\"default\">COMMANDS</button>\n      <button class=\"default\">CONFIG</button>\n    </div>\n  ";
                 userData = {
                     title: result.username,
-                    userImage: "<img src=\"https://cdn.discordapp.com/" + result.avatar + ".png\">",
+                    userImage: "<img src=\"https://cdn.discordapp.com/avatars/" + result.id + "/" + result.avatar + ".webp\">",
                     servers: guilds,
                     username: result.username,
                     app: htmlData
@@ -126,35 +127,14 @@ router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, v
         }
     });
 }); });
-/*
-router.get('/:user', (req, res) => {
-  res.render('user');
-});
-*/
-router.get('/guild/:guildID/:type', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var guildID, reqType, guildPath, config_1, commands_1;
+router.get('/:guildID', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var guildID, guildPath, config, commands;
     return __generator(this, function (_a) {
         guildID = req.params.guildID;
-        reqType = req.params.type;
         guildPath = path_1.default.join(__dirname, '../../..', 'lib', 'servers', guildID);
-        if (reqType == 'config') {
-            config_1 = fs_1.default.createReadStream(guildPath + '/config.json');
-            config_1.on('data', function (chunck) {
-                config_1.pipe(res.json(JSON.parse(chunck)));
-            });
-            config_1.on('error', function (err) {
-                res.end(err);
-            });
-        }
-        else {
-            commands_1 = fs_1.default.createReadStream(guildPath + '/commands.json');
-            commands_1.on('data', function (chunk) {
-                commands_1.pipe(res.json(JSON.parse(chunk)));
-            });
-            commands_1.on('error', function (err) {
-                res.end(err);
-            });
-        }
+        config = JSON.parse(fs_1.default.readFileSync(guildPath + '/config.json', 'utf8'));
+        commands = JSON.parse(fs_1.default.readFileSync(guildPath + '/commands.json', 'utf8'));
+        res.json({ config: config, commands: commands });
         return [2 /*return*/];
     });
 }); });
