@@ -54,7 +54,7 @@ var path_1 = __importDefault(require("path"));
 require('dotenv').config();
 var router = express_1.Router();
 router.get('/', function (req, res) {
-    var data = "\n  <div class=\"top\">\n    <div class=\"header\">\n      <main>\n        <h1><p><span>HplBot</span></p> <span>for</span> <span>Discord</span> <span>!</span></h1>\n      </main>\n      <div class=\"controls\">\n        <a href=\"https://discordapp.com/oauth2/authorize?client_id=682969119406293002&scope=bot\" title=\"Call it\"><button class=\"getItButton\">GET IT</button></a>\n        <a href=\"https://discordapp.com/api/oauth2/authorize?client_id=682969119406293002&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fcallback&response_type=code&scope=guilds%20identify\" title=\"Connect\"><button class=\"loginButton\">LOG IN</button></a>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"center\">\n    <ul class=\"features\">\n      <li>Automaticly use Twitch bot commands</li>\n      <li>Get usefull logs in dedicated log channel</li>\n      <li>Hplbot will always be <strong>Free</strong></li>\n      <li>Open-source project</li>\n      <li>Self-hosted, ready to use</li>\n      <li>One-click setup</li>\n      <li>Phrase customizations</li>\n      <li>Manage roles</li>\n      <li>Manage channels</li>\n      <li>Creates temporary channels</li>\n      <li>Clears temporary channels when empty</li>\n    </ul>\n  </div>\n  ";
+    var data = "\n  <div class=\"top\">\n    <div class=\"header\">\n      <main>\n        <h1><p><span>HplBot</span></p> <span>for</span> <span>Discord</span> <span>!</span></h1>\n      </main>\n      <div class=\"controls\">\n        <a href=\"https://discordapp.com/oauth2/authorize?client_id=682969119406293002&scope=bot\" title=\"Call it\"><button class=\"getItButton\">GET IT</button></a>\n        <a href=\"https://discordapp.com/api/oauth2/authorize?client_id=682969119406293002&redirect_uri=" + process.env.REDIRECT_URI + "&response_type=code&scope=guilds%20identify\" title=\"Connect\"><button class=\"loginButton\">LOG IN</button></a>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"center\">\n    <ul class=\"features\">\n      <li>Automaticly use Twitch bot commands</li>\n      <li>Get usefull logs in dedicated log channel</li>\n      <li>Hplbot will always be <strong>Free</strong></li>\n      <li>Open-source project</li>\n      <li>Self-hosted, ready to use</li>\n      <li>One-click setup</li>\n      <li>Phrase customizations</li>\n      <li>Manage roles</li>\n      <li>Manage channels</li>\n      <li>Creates temporary channels</li>\n      <li>Clears temporary channels when empty</li>\n    </ul>\n  </div>\n  ";
     res.render('index', { title: "Welcome", app: data });
 });
 router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -67,7 +67,7 @@ router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, v
                     return [2 /*return*/, res.send('Error while authenticating with Discord')];
                 data = {
                     "code": obj.query.code,
-                    "redirect_uri": "http://localhost:5000/callback",
+                    "redirect_uri": process.env.REDIRECT_URI,
                     "grant_type": "authorization_code",
                     "client_id": process.env.CLIENT_ID,
                     "client_secret": process.env.CLIENT_SECRET,

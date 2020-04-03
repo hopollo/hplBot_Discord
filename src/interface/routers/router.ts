@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
       </main>
       <div class="controls">
         <a href="https://discordapp.com/oauth2/authorize?client_id=682969119406293002&scope=bot" title="Call it"><button class="getItButton">GET IT</button></a>
-        <a href="https://discordapp.com/api/oauth2/authorize?client_id=682969119406293002&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fcallback&response_type=code&scope=guilds%20identify" title="Connect"><button class="loginButton">LOG IN</button></a>
+        <a href="https://discordapp.com/api/oauth2/authorize?client_id=682969119406293002&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=guilds%20identify" title="Connect"><button class="loginButton">LOG IN</button></a>
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@ router.get('/callback', async (req, res) => {
 
   const data = {
     "code" : obj.query.code,
-    "redirect_uri" : "http://localhost:5000/callback",
+    "redirect_uri" : process.env.REDIRECT_URI,
     "grant_type" : "authorization_code",
     "client_id" : process.env.CLIENT_ID,
     "client_secret" : process.env.CLIENT_SECRET,
@@ -116,8 +116,7 @@ router.get('/callback', async (req, res) => {
     userImage: `<img src="https://cdn.discordapp.com/avatars/${result.id}/${result.avatar}.webp">`,
     servers: guilds,
     username: result.username,
-    app: htmlData,
-    styleEl: 'display { none }'
+    app: htmlData
   }
 
   res.render('user', userData);
