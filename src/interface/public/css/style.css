@@ -16,9 +16,8 @@
 body {
   color: white;
   font-weight: bold;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 .loader {
@@ -76,6 +75,22 @@ body {
           align-items: center;
   text-align: center;
   text-shadow: 1px 1px black;
+}
+
+button {
+  width: 135px;
+  height: 60px;
+  margin-top: 25px;
+  padding: 20px 40px;
+  background: white;
+  border: 2px solid var(--c1);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--c1);
+  color: white;
 }
 
 .top main {
@@ -157,24 +172,12 @@ body {
   padding: .5px;
 }
 
-.top button {
-  width: 135px;
-  height: 60px;
-  margin-top: 25px;
-  padding: 20px 40px;
-  background: white;
-  border: 2px solid var(--c1);
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.top button:hover {
-  background: var(--c1);
-  color: white;
-}
-
-.top .getItButton, .top .default {
+.top .getItButton {
   color: var(--c1);
+}
+
+.top .getItButton:hover {
+  color: white;
 }
 
 .top .loginButton {

@@ -58,13 +58,16 @@ router.get('/', function (req, res) {
     res.render('index', { title: "Welcome", app: data });
 });
 router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var obj, data, request, result, guilds, htmlData, userData;
+    var obj, oathPath, oauth, exists, data, request, result, guilds, userData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 obj = url_1.default.parse(req.url, true);
                 if (!obj.query.code)
                     return [2 /*return*/, res.send('Error while authenticating with Discord')];
+                oathPath = path_1.default.join(__dirname, '../../..', 'lib', 'oauths', obj.query.code.toString());
+                exists = fs_1.default.existsSync(oathPath);
+                if (!!exists) return [3 /*break*/, 2];
                 data = {
                     "code": obj.query.code,
                     "redirect_uri": process.env.REDIRECT_URI,
@@ -85,56 +88,64 @@ router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, v
                         .catch(function (err) { return res.send(err); })];
             case 1:
                 request = _a.sent();
-                return [4 /*yield*/, node_fetch_1.default('https://discordapp.com/api/v6/users/@me', {
-                        headers: {
-                            authorization: request.token_type + " " + request.access_token,
-                        },
-                    })
-                        .then(function (res) { return res.json(); })
-                        .catch(console.error)];
+                fs_1.default.writeFile(oathPath, JSON.stringify(request), function (err) {
+                    if (err)
+                        console.error;
+                });
+                oauth = request;
+                return [3 /*break*/, 3];
             case 2:
+                oauth = JSON.parse(fs_1.default.readFileSync(oathPath).toString());
+                _a.label = 3;
+            case 3: return [4 /*yield*/, node_fetch_1.default('https://discordapp.com/api/v6/users/@me', {
+                    headers: {
+                        authorization: oauth.token_type + " " + oauth.access_token,
+                    },
+                })
+                    .then(function (res) { return res.json(); })
+                    .catch(console.error)];
+            case 4:
                 result = _a.sent();
                 return [4 /*yield*/, node_fetch_1.default('https://discordapp.com/api/v6/users/@me/guilds', {
                         headers: {
-                            authorization: request.token_type + " " + request.access_token,
+                            authorization: oauth.token_type + " " + oauth.access_token,
                         },
                     })
                         .then(function (res) { return res.json(); })
-                        // TODO: Sort by name alphabetic
-                        .then(function (guilds) { return Array.from(guilds).filter(function (g) { return g.owner === true; }); })
-                        // TODO: Exclude owned guilds that are not "servers" of hplBot
-                        /*
-                        .then((ownedGuilds: any) => {
-                          let server = [];
-                          const exists = fs.existsSync(path.join(__dirname, '../../..', 'lib', 'servers', ownedGuilds.id))
-                          if (!exists) return;
-                          server.push(ownedGuilds);
-                        })
-                        */
+                        .then(function (guilds) {
+                        return Object.values(guilds).filter(function (g) { return g.owner === true &&
+                            fs_1.default.existsSync(path_1.default.join(__dirname, '../../..', 'lib', 'servers', g.id)) === true; });
+                    })
                         .catch(console.error)];
-            case 3:
+            case 5:
                 guilds = _a.sent();
-                htmlData = "\n    <div class=\"controls\">\n      <button class=\"default\">COMMANDS</button>\n      <button class=\"default\">CONFIG</button>\n    </div>\n  ";
                 userData = {
                     title: result.username,
                     userImage: "<img src=\"https://cdn.discordapp.com/avatars/" + result.id + "/" + result.avatar + ".webp\">",
                     servers: guilds,
                     username: result.username,
-                    app: htmlData
+                    commands: {},
+                    config: {}
                 };
                 res.render('user', userData);
                 return [2 /*return*/];
         }
     });
 }); });
-router.get('/:guildID', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var guildID, guildPath, config, commands;
+router.get('/:guildID(\\d+)', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var guildID, guildPath, config, commands, data;
     return __generator(this, function (_a) {
-        guildID = req.params.guildID;
-        guildPath = path_1.default.join(__dirname, '../../..', 'lib', 'servers', guildID);
-        config = JSON.parse(fs_1.default.readFileSync(guildPath + '/config.json', 'utf8'));
-        commands = JSON.parse(fs_1.default.readFileSync(guildPath + '/commands.json', 'utf8'));
-        res.json({ config: config, commands: commands });
+        try {
+            guildID = req.params.guildID;
+            guildPath = path_1.default.join(__dirname, '../../..', 'lib', 'servers', guildID);
+            config = JSON.parse(fs_1.default.readFileSync(guildPath + '/config.json', 'utf8'));
+            commands = JSON.parse(fs_1.default.readFileSync(guildPath + '/commands.json', 'utf8'));
+            res.status(200).render('./components/guildData', { config: config, commands: commands });
+        }
+        catch (error) {
+            data = "Sorry, Page Not Found or Doesn't Exists Anymore ! <a href='/'><button>Exit</button></a>";
+            res.status(404).render('error', { title: "Error", app: data });
+        }
         return [2 /*return*/];
     });
 }); });

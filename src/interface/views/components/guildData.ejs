@@ -1,0 +1,28 @@
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'Commands')">Commands</button>
+  <button class="tablinks" onclick="openTab(event, 'Config')">Config</button>
+</div>
+
+<div id="Commands" class="tabContent active">
+  <table id="commandsContainer">
+    <tr>
+      <th>Command</th>
+      <th>Response</th>
+    </tr>
+    <% for (cmd in commands) { %>
+      <tr>
+        <td class="command"><%= cmd %></td>
+        <td class="response"><%= commands[cmd] %></td>
+      </tr>
+    <% }; %>
+  </table>
+</div>
+
+<div id="Config" class="tabContent">
+  <div id="configContainer">
+    <h1>Choose an option :</h1>
+    <select id="optionType" onchange="openTab(event, this.value)"></select>
+  </div>
+</div>
+
+<script src="./js/guildData.js"></script>

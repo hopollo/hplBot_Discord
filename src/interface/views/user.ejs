@@ -21,14 +21,7 @@
     </div>
 
     <div class="center">
-      <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'Commands')">Commands</button>
-        <button class="tablinks" onclick="openTab(event, 'Config')">Config</button>
-      </div>
-
-      <%- include('./components/commands') %>
-
-      <%- include('./components/config') %>
+      <%- include('./components/guildData') %>
     </div>
 
     <%- include ('./components/footer') %>
@@ -36,7 +29,5 @@
   </div>
 
   <%- include ('./components/particules') %>
-
-  <script src="./js/user.js"></script>
 </body>
 </html>
