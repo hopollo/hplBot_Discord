@@ -76,7 +76,9 @@ var NightbotScrapper = /** @class */ (function () {
                                 return [4 /*yield*/, page.evaluate(function () {
                                         return Array.from(document.querySelectorAll('tr'))
                                             .map(function (i) { return i.children; })
-                                            .reduce(function (a, b) { return (a[b[0].innerHTML] = b[1].innerHTML.replace('/me', '').slice(1), a); }, {});
+                                            .reduce(function (a, b) { return (a[b[0].innerHTML] = b[1].innerHTML
+                                            .replace('/me', '')
+                                            , a); }, {});
                                     })];
                             case 5:
                                 result = _a.sent();

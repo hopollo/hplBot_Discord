@@ -31,7 +31,9 @@ export class NightbotScrapper {
       const result = await page.evaluate(() => {
         return Array.from(document.querySelectorAll('tr'))
                     .map(i => i.children)
-                    .reduce((a: any, b: any) => (a[b[0].innerHTML] = b[1].innerHTML.replace('/me','').slice(1), a), {});
+                    .reduce((a: any, b: any) => (a[b[0].innerHTML] = b[1].innerHTML
+                        .replace('/me','')
+                    , a), {});
       });
       
       await browser.close();

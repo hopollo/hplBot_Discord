@@ -31,8 +31,8 @@ export class FossabotScrapper {
         return Array.from(document.querySelectorAll('tr.jss139'))
                     .map(i => i.children)
                     .reduce((a: any, b: any) => (a[b[0].innerHTML] = b[1].innerHTML
-                        .replace('/me','').slice(1)
-                        .replace('$(sender)','').slice(1), 
+                        .replace('/me','')
+                        .replace('$(sender)',''), 
                     a), {});
       });
 

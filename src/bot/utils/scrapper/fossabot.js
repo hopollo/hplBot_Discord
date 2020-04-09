@@ -77,8 +77,8 @@ var FossabotScrapper = /** @class */ (function () {
                                         return Array.from(document.querySelectorAll('tr.jss139'))
                                             .map(function (i) { return i.children; })
                                             .reduce(function (a, b) { return (a[b[0].innerHTML] = b[1].innerHTML
-                                            .replace('/me', '').slice(1)
-                                            .replace('$(sender)', '').slice(1),
+                                            .replace('/me', '')
+                                            .replace('$(sender)', ''),
                                             a); }, {});
                                     })];
                             case 5:

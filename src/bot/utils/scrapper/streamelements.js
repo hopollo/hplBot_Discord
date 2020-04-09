@@ -76,7 +76,9 @@ var StreamElementsScrapper = /** @class */ (function () {
                                 return [4 /*yield*/, page.evaluate(function () {
                                         return Array.from(document.querySelectorAll('tr.md-row'))
                                             .map(function (i) { return i.children; })
-                                            .reduce(function (a, b) { return (a[b[0].innerHTML.slice(0, -1)] = b[1].innerHTML.replace('/me', '').slice(1), a); }, {});
+                                            .reduce(function (a, b) { return (a[b[0].innerHTML.slice(0, -1)] = b[1].innerHTML
+                                            .replace('/me', '')
+                                            , a); }, {});
                                     })];
                             case 5:
                                 result = _a.sent();

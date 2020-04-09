@@ -31,7 +31,9 @@ export class MoobotScrapper {
       const result = await page.evaluate(() => {
         return Array.from(document.querySelectorAll('tr'))
                     .map(i => i.children)
-                    .reduce((a: any, b: any) => (a['!'+ b[0].innerText] = b[1].innerText.replace('/me','').slice(1), a), {});
+                    .reduce((a: any, b: any) => (a['!'+ b[0].innerText] = b[1].innerText
+                      .replace('/me',''), 
+                    a), {});
       });
       
       await browser.close();
