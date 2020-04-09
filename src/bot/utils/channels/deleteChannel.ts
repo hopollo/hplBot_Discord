@@ -10,11 +10,11 @@ const configFile = Bot_Config.Servers_Config.templates.configFile;
 
 export class ChannelDeleter {
   public async checkUsersOf(channel: VoiceChannel) {
-    const config = await import(path.join(serverDir, channel.guild.id, configFile));
+    const config = await new DataWriter().read(path.join(serverDir, channel.guild!.id, configFile));
     const tempChannelsContainerID = config.Vocals_Options.vocals_category_id;
     
     if (channel.type === "voice" && channel.parentID === tempChannelsContainerID) {
-      this.deleteTempChannel(channel, config);
+      this.deleteTempChannel(channel);
     }
   }
     
@@ -25,12 +25,13 @@ export class ChannelDeleter {
       const tempChannel = g.channels.cache.filter(c => c.type === "voice" && c.parentID === tempChannelsContainerID);
       
       tempChannel.forEach(c => {
-        this.deleteTempChannel(c as VoiceChannel, config)
+        this.deleteTempChannel(c as VoiceChannel)
       });
     });
   }
   
-  private async deleteTempChannel(target: VoiceChannel, config: any) {
+  private async deleteTempChannel(target: VoiceChannel) {
+    const config = await new DataWriter().read(path.join(serverDir, target.guild.id, configFile));
     const allowDeletion = config.Vocals_Options.purge_options.purge_empty_channels;
 
     if (!allowDeletion) return;

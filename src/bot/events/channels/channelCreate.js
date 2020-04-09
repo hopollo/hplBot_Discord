@@ -44,23 +44,22 @@ var logs_1 = require("../../utils/logs/logs");
 var path_1 = __importDefault(require("path"));
 var write_1 = require("../../utils/data/write");
 function channelCreate(channel) {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
         var config, allowLogs, author, msgContent;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0: return [4 /*yield*/, new write_1.DataWriter().read(path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path, channel.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))];
                 case 1:
-                    config = _c.sent();
+                    config = _a.sent();
                     allowLogs = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
                     if (!allowLogs)
                         return [2 /*return*/];
-                    author = (_a = channel.guild.owner) === null || _a === void 0 ? void 0 : _a.user;
+                    author = channel.guild.owner.user;
                     return [4 /*yield*/, config.Channels_Options.logs_channel.logs_options.channels_creations.message
-                            .replace('{{user}}', (_b = author) === null || _b === void 0 ? void 0 : _b.username)
+                            .replace('{{user}}', author.username)
                             .replace('{{channel}}', channel.name)];
                 case 2:
-                    msgContent = _c.sent();
+                    msgContent = _a.sent();
                     new logs_1.Log(author, msgContent);
                     return [2 /*return*/];
             }

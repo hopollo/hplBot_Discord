@@ -10,9 +10,9 @@ export async function channelCreate(channel: GuildChannel) {
 
   if (!allowLogs) return;
 
-  const author = channel.guild.owner?.user;
+  const author = channel.guild.owner!.user;
   const msgContent: string = await config.Channels_Options.logs_channel.logs_options.channels_creations.message
-    .replace('{{user}}', author?.username)
+    .replace('{{user}}', author!.username)
     .replace('{{channel}}', channel.name);
 
   new Log(author!, msgContent);

@@ -18,8 +18,8 @@ export class Mover {
     RECONNECTING: 3
     DISCONNECTED: 4
     */
-    if (target.voice.connection?.status === 0) {
-      target.voice.setChannel(destination).catch(console.error);
+    if (target.voice.connection!.status === 0) {
+      target.voice.setChannel(destination, 'Moved to own temp channel').catch(console.error);
     }
   }
 }
