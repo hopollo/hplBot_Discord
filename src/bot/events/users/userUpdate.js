@@ -56,8 +56,7 @@ function userUpdate(oldUser, newUser) {
                 case 1:
                     config = _a.sent();
                     allowLogs = config.Channels_Options.logs_channel.logs_options.users_info_changes.enabled;
-                    // Stops here if the config says to do so
-                    if (allowLogs)
+                    if (!allowLogs)
                         return [2 /*return*/];
                     msgContent = config.Channels_Options.logs_channel.logs_options.users_info_changes.message
                         .replace('{{user}}', newUser.username)

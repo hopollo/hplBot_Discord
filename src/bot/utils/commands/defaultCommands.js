@@ -54,7 +54,7 @@ var Command = /** @class */ (function () {
         this._content = msg.content;
         this._cmd = this._content.toLowerCase().split(' ')[0];
         this._args = this._content.split(' ').slice(1);
-        this.commandsFilePath = path_1.default.join(serverDir, msg.id, commandFile);
+        this.commandsFilePath = path_1.default.join(serverDir, msg.guild.id, commandFile);
         this.processMsg(this._msg);
     }
     Command.prototype.processMsg = function (msg) {
@@ -71,13 +71,13 @@ var Command = /** @class */ (function () {
                         customCommand = this._cfg.Vocals_Options.creation_command;
                         switch (this._cmd) {
                             case '!addcom':
-                                this.addCom(this._args);
+                                this.addCom(this._content);
                                 break;
                             case '!editcom':
-                                this.editCom(this._args);
+                                this.editCom(this._content);
                                 break;
                             case '!delcom':
-                                this.delCom(this._cmd);
+                                this.delCom(this._content);
                                 break;
                             case '!duo':
                                 new createChannel_1.ChannelCreator(this._msg, 2);
@@ -106,20 +106,19 @@ var Command = /** @class */ (function () {
         });
     };
     Command.prototype.fecthCommand = function (msg) {
-        var _a, _b;
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var filePath, unknownCommand, unknownCommandMessage, response, msgContent;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var unknownCommand, unknownCommandMessage, response, msgContent;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         if (!((_a = msg.member) === null || _a === void 0 ? void 0 : _a.hasPermission("MANAGE_GUILD")))
                             return [2 /*return*/, msg.reply("Sorry, you'r not allowed.")];
-                        filePath = path_1.default.join(serverDir, (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.id, commandFile);
                         unknownCommand = this._cfg.Commands_Options.enabled;
                         unknownCommandMessage = this._cfg.Commands_Options.message;
-                        return [4 /*yield*/, new write_1.DataWriter().findInto(filePath, this._cmd)];
+                        return [4 /*yield*/, new write_1.DataWriter().findInto(this.commandsFilePath, this._cmd)];
                     case 1:
-                        response = _c.sent();
+                        response = _b.sent();
                         if (response)
                             return [2 /*return*/, msg.reply(response)];
                         if (unknownCommand) {
@@ -138,10 +137,10 @@ var Command = /** @class */ (function () {
     Command.prototype.help = function () {
         var helpEmbed = new discord_js_1.MessageEmbed()
             .setAuthor('HplBot Commands :')
-            //.addField('Create a command, overrides existing from (!scrap)', '!addcom !hi Hello there')
-            //.addField('Edit a command', '!editcom !hi Bonjour !')
-            //.addField('Delete a command', '!delcom !hi')
-            .addField('Always ignore a command from (!scrap)', '!bancom !setgame')
+            .addField('Create a command, overrides existing from (!scrap)', '!addcom !hi Hello there')
+            .addField('Edit a command', '!editcom !hi Bonjour !')
+            .addField('Delete a command', '!delcom !hi')
+            //.addField('Always ignore a command from (!scrap)', '!bancom !setgame')
             //.addField('Protects a command from override with (!scrap)', '!lockcom !followage')
             .addField('Copy all twitch chat bot commands & override currents', '!scrap')
             .addField('Creates a channel', '!duo, !trio, !squad, !custom NUMBER')
@@ -149,21 +148,34 @@ var Command = /** @class */ (function () {
         this._msg.reply(helpEmbed);
     };
     Command.prototype.addCom = function (args) {
-        var command = args.slice(1)[0];
-        var resp = args.slice(1);
-        var cmd = Object.keys({ command: resp });
-        var test = args.reduce(function (a, b) { return (a = b, a); }, {});
-        console.log(test);
-        //new DataWriter().appendTo(this.commandsFilePath, );
-    };
-    Command.prototype.delCom = function (cmd) {
-        return this._msg.reply('soon');
-        new write_1.DataWriter().removeTo(this.commandsFilePath, cmd);
+        var _a;
+        var _b;
+        if (!((_b = this._msg.member) === null || _b === void 0 ? void 0 : _b.hasPermission('MANAGE_GUILD')))
+            return;
+        var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var command = match[2];
+        var resp = match[3];
+        var data = (_a = {}, _a[command] = resp, _a);
+        new write_1.DataWriter().appendTo(this.commandsFilePath, data);
     };
     Command.prototype.editCom = function (args) {
-        var command = args.slice(1)[0];
-        var resp = args.slice(2);
-        new write_1.DataWriter().replaceTo(this.commandsFilePath, { command: command, resp: resp });
+        var _a;
+        var _b;
+        if (!((_b = this._msg.member) === null || _b === void 0 ? void 0 : _b.hasPermission('MANAGE_GUILD')))
+            return;
+        var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var command = match[2];
+        var resp = match[3];
+        var data = (_a = {}, _a[command] = resp, _a);
+        new write_1.DataWriter().appendTo(this.commandsFilePath, data);
+    };
+    Command.prototype.delCom = function (args) {
+        var _a;
+        if (!((_a = this._msg.member) === null || _a === void 0 ? void 0 : _a.hasPermission('MANAGE_GUILD')))
+            return;
+        var match = args.match(/^(!\w+)\s(!\w+)/);
+        var command = match[2];
+        new write_1.DataWriter().removeTo(this.commandsFilePath, command);
     };
     Command.prototype.customChannel = function (cmd, slots) {
         new createChannel_1.ChannelCreator(this._msg, slots);

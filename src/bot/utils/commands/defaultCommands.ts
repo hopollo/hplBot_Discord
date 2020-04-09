@@ -21,10 +21,10 @@ export class Command {
   constructor(msg: Message) {
     this._msg = msg;
     this._content = msg.content;
-    this._cmd = this._content.toLowerCase().split(' ')[0]; 
+    this._cmd = this._content.toLowerCase().split(' ')[0];
     this._args = this._content.split(' ').slice(1);
 
-    this.commandsFilePath = path.join(serverDir, msg.id, commandFile);
+    this.commandsFilePath = path.join(serverDir, msg.guild!.id, commandFile);
 
     this.processMsg(this._msg);
   }
@@ -34,9 +34,9 @@ export class Command {
     const customCommand: string = this._cfg.Vocals_Options.creation_command;
 
     switch(this._cmd) {
-      case '!addcom': this.addCom(this._args); break;
-      case '!editcom': this.editCom(this._args); break;
-      case '!delcom': this.delCom(this._cmd); break;
+      case '!addcom': this.addCom(this._content); break;
+      case '!editcom': this.editCom(this._content); break;
+      case '!delcom': this.delCom(this._content); break;
       case '!duo': new ChannelCreator(this._msg, 2); break;
       case '!trio': new ChannelCreator(this._msg, 3); break;
       case '!squad': new ChannelCreator(this._msg, 5); break;
@@ -50,13 +50,11 @@ export class Command {
 
   private async fecthCommand(msg: Message) {
     if (!msg.member?.hasPermission("MANAGE_GUILD")) return msg.reply(`Sorry, you'r not allowed.`);
-
-    const filePath = path.join(serverDir, msg.guild?.id!, commandFile);
-
+    
     const unknownCommand = this._cfg.Commands_Options.enabled;
     const unknownCommandMessage = this._cfg.Commands_Options.message;
     
-    const response = await new DataWriter().findInto(filePath, this._cmd) as string;
+    const response = await new DataWriter().findInto(this.commandsFilePath, this._cmd) as string;
     if (response) return msg.reply(response);
 
     if (unknownCommand) {
@@ -74,10 +72,10 @@ export class Command {
   private help() {
     const helpEmbed = new MessageEmbed()
       .setAuthor('HplBot Commands :')
-      //.addField('Create a command, overrides existing from (!scrap)', '!addcom !hi Hello there')
-      //.addField('Edit a command', '!editcom !hi Bonjour !')
-      //.addField('Delete a command', '!delcom !hi')
-      .addField('Always ignore a command from (!scrap)', '!bancom !setgame')
+      .addField('Create a command, overrides existing from (!scrap)', '!addcom !hi Hello there')
+      .addField('Edit a command', '!editcom !hi Bonjour !')
+      .addField('Delete a command', '!delcom !hi')
+      //.addField('Always ignore a command from (!scrap)', '!bancom !setgame')
       //.addField('Protects a command from override with (!scrap)', '!lockcom !followage')
       .addField('Copy all twitch chat bot commands & override currents', '!scrap')
       .addField('Creates a channel', '!duo, !trio, !squad, !custom NUMBER')
@@ -85,24 +83,34 @@ export class Command {
     this._msg.reply(helpEmbed);
   }
 
-  private addCom(args: string[]) {
-    const command = args.slice(1)[0];
-    const resp = args.slice(1);
-    const cmd = Object.keys({command:resp});
-    const test = args.reduce((a,b) => (a=b, a), {})
-    console.log(test);
-    //new DataWriter().appendTo(this.commandsFilePath, );
+  private addCom(args: string) {
+    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return;
+
+    const match: any = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const command: string = match[2];
+    const resp: string = match[3];
+    const data: { [command: string]: string; } = { [command] : resp };
+    
+    new DataWriter().appendTo(this.commandsFilePath, data);
   }
 
-  private delCom(cmd: string) {
-    return this._msg.reply('soon');
-    new DataWriter().removeTo(this.commandsFilePath, cmd); 
+  private editCom(args: string) {
+    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return;
+
+    const match: any = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const command: string = match[2];
+    const resp: string = match[3];
+    const data: { [command: string]: string; } = { [command] : resp };
+
+    new DataWriter().appendTo(this.commandsFilePath, data);
   }
 
-  private editCom(args: string[]) {
-    const command = args.slice(1)[0];
-    const resp = args.slice(2);
-    new DataWriter().replaceTo(this.commandsFilePath, {command, resp});
+  private delCom(args: string) {
+    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return;
+
+    const match: any = args.match(/^(!\w+)\s(!\w+)/)
+    const command = match[2];
+    new DataWriter().removeTo(this.commandsFilePath, command); 
   }
   
   private customChannel(cmd: string, slots: number) {

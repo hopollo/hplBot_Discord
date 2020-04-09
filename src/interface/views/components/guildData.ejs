@@ -4,24 +4,33 @@
 </div>
 
 <div id="Commands" class="tabContent active">
-  <table id="commandsContainer">
-    <tr>
-      <th>Command</th>
-      <th>Response</th>
-    </tr>
-    <% for (cmd in commands) { %>
+  <% if (commands) { %>
+    <table id="commandsContainer">
       <tr>
-        <td class="command"><%= cmd %></td>
-        <td class="response"><%= commands[cmd] %></td>
+        <th>Command</th>
+        <th>Response</th>
       </tr>
-    <% }; %>
-  </table>
+
+      <% for (cmd in commands) { %>
+        <tr>
+          <td class="command"><%= cmd %></td>
+          <td class="response"><%= commands[cmd] %></td>
+        </tr>
+      <% }; %>
+    </table>
+  <% } else { %>
+    <h1>No Commands Yet ?</h1>
+  <% } %>
 </div>
 
 <div id="Config" class="tabContent">
   <div id="configContainer">
-    <h1>Choose an option :</h1>
-    <select id="optionType" onchange="openTab(event, this.value)"></select>
+    <% if (config) { %>
+     <h1>Choose an option :</h1>
+      <select id="optionType" onchange="openTab(event, this.value)"></select>
+    <% } else { %>
+      <h1>Config not found, make sure hplBot is not kicked from your server</h1>
+    <% } %>
   </div>
 </div>
 

@@ -74,32 +74,15 @@ var DataWriter = /** @class */ (function () {
             });
         });
     };
-    DataWriter.prototype.replaceTo = function (filePath, data) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                fs_1.default.writeFile(filePath, JSON.stringify(data), function (err) {
-                    if (err)
-                        return console.error(err);
-                });
-                return [2 /*return*/];
-            });
-        });
-    };
     DataWriter.prototype.appendTo = function (filePath, data) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 fs_1.default.readFile(filePath, 'utf8', function (err, oldData) {
                     if (err)
-                        console.error;
-                    if (!oldData)
-                        return fs_1.default.appendFile(filePath, JSON.stringify(data), function (err) {
-                            if (err)
-                                console.error;
-                        });
+                        return console.error;
                     var json = JSON.parse(oldData);
-                    json.push(data);
-                    console.log(json);
-                    fs_1.default.writeFile(filePath, JSON.stringify(json), function (err) {
+                    var newJSON = Object.assign(json, data);
+                    fs_1.default.writeFile(filePath, JSON.stringify(newJSON), function (err) {
                         if (err)
                             return console.error;
                     });
@@ -111,16 +94,14 @@ var DataWriter = /** @class */ (function () {
     DataWriter.prototype.removeTo = function (filePath, data) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                fs_1.default.readFile(filePath, function (err, json) {
+                fs_1.default.readFile(filePath, 'utf8', function (err, oldJSON) {
                     if (err)
                         return console.error;
-                    if (!json)
+                    if (!oldJSON)
                         return console.error(new Error(filePath + " : No data inside"));
-                    var array = JSON.parse(json.toString());
-                    var index = array.indexOf(data);
-                    if (index > -1)
-                        array.splice(index, 1);
-                    fs_1.default.writeFile(filePath, JSON.stringify(array), function (err) {
+                    var json = JSON.parse(oldJSON);
+                    delete json[data.toString()];
+                    fs_1.default.writeFile(filePath, JSON.stringify(json), function (err) {
                         if (err)
                             return console.error(err);
                     });

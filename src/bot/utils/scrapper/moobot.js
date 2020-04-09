@@ -93,7 +93,7 @@ var MoobotScrapper = /** @class */ (function () {
                     return __generator(this, function (_b) {
                         switch (_b.label) {
                             case 0:
-                                new write_1.DataWriter().replaceTo(path_1.default.join(serverDir, (_a = this._msg.guild) === null || _a === void 0 ? void 0 : _a.id, commandsFile), data);
+                                new write_1.DataWriter().appendTo(path_1.default.join(serverDir, (_a = this._msg.guild) === null || _a === void 0 ? void 0 : _a.id, commandsFile), data);
                                 this._msg.reactions.removeAll();
                                 return [4 /*yield*/, this._msg.react("✔️")];
                             case 1:

@@ -23,6 +23,7 @@ function StartSliding() {
 
 const getItButton = document.querySelector('.getItButton');
 const loginButton = document.querySelector('.loginButton');
+const templateButton = document.querySelector('.templateButton');
 
 //GET IT BUTTON
 getItButton.onmouseenter = () => {
@@ -30,6 +31,14 @@ getItButton.onmouseenter = () => {
 }
 getItButton.onmouseleave = () => {
   getItButton.innerText = "GET IT";
+}
+
+//TEMPLATE BUTTON
+templateButton.onmouseenter = () => {
+  templateButton.innerHTML = "BOILER";
+}
+templateButton.onmouseleave = () => {
+  templateButton.innerHTML = "SERVER"; 
 }
 
 //LOG IN BUTTON

@@ -1,35 +1,34 @@
 import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
+import helmet from 'helmet';
 import router from './interface/routers/router';
-
 
 require('dotenv').config();
 
-const app = express();
-
-/*
 const { HplBot } = require('./bot/utils/core/bot');
 new HplBot().start(process.env.BOT_TOKEN);
-*/
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'interface', 'views'));
+const app = express();
 
-app.use(express.static(path.join(__dirname, 'interface', 'public')));
-
-app.use(express.json());
+app.use(helmet());
 
 app.use(morgan('dev'));
 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'interface', 'views'));
+app.use(express.static(path.join(__dirname, 'interface', 'public')));
+
+
+app.use(express.static(path.join(__dirname, 'interface', 'public')));
+
 app.use('/', router);
-app.use('/callback/:code', router);
-app.use('/:guild', router);
 
 // 404 route
-app.use('*', (req, res) => {
-  const data = `Sorry, Page Not Found or Doesn't Exists Anymore ! <a href='/'><button>Exit</button></a>`;
-  res.status(404).render('error', { title: "Error", app: data });
+app.use((req: express.Request, res: express.Response) => {
+  res.status(404).render('error', {
+    title: 'Error 404',
+    app : `Oops ! Page Not Found or Doesn't Exists Anymore ! <a href='/'><button>Exit</button></a>`});
 });
 
 app.listen(process.env.PORT || 5000, () => { 

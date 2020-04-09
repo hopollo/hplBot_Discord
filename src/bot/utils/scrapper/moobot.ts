@@ -40,7 +40,7 @@ export class MoobotScrapper {
 
     getData()
       .then(async (data) => { 
-        new DataWriter().replaceTo(path.join(serverDir, this._msg.guild?.id!, commandsFile), data)
+        new DataWriter().appendTo(path.join(serverDir, this._msg.guild?.id!, commandsFile), data)
         this._msg.reactions.removeAll();
         await this._msg.react("✔️");
       })

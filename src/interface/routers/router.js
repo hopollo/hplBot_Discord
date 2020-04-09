@@ -54,8 +54,16 @@ var path_1 = __importDefault(require("path"));
 require('dotenv').config();
 var router = express_1.Router();
 router.get('/', function (req, res) {
-    var data = "\n  <div class=\"top\">\n    <div class=\"header\">\n      <main>\n        <h1><p><span>HplBot</span></p> <span>for</span> <span>Discord</span> <span>!</span></h1>\n      </main>\n      <div class=\"controls\">\n        <a href=\"https://discordapp.com/oauth2/authorize?client_id=682969119406293002&scope=bot\" title=\"Call it\"><button class=\"getItButton\">GET IT</button></a>\n        <a href=\"https://discordapp.com/api/oauth2/authorize?client_id=682969119406293002&redirect_uri=" + process.env.REDIRECT_URI + "&response_type=code&scope=guilds%20identify\" title=\"Connect\"><button class=\"loginButton\">LOG IN</button></a>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"center\">\n    <ul class=\"features\">\n      <li>Automaticly use Twitch bot commands</li>\n      <li>Get usefull logs in dedicated log channel</li>\n      <li>Hplbot will always be <strong>Free</strong></li>\n      <li>Open-source project</li>\n      <li>Self-hosted, ready to use</li>\n      <li>One-click setup</li>\n      <li>Phrase customizations</li>\n      <li>Manage roles</li>\n      <li>Manage channels</li>\n      <li>Creates temporary channels</li>\n      <li>Clears temporary channels when empty</li>\n    </ul>\n  </div>\n  ";
-    res.render('index', { title: "Welcome", app: data });
+    res.render('index', { title: "Welcome" });
+});
+router.get('/try', function (req, res) {
+    res.redirect("https://discordapp.com/oauth2/authorize?client_id=" + process.env.CLIENT_ID + "&scope=bot");
+});
+router.get('/login', function (req, res) {
+    res.redirect("https://discordapp.com/api/oauth2/authorize?client_id=" + process.env.CLIENT_ID + "&redirect_uri=" + process.env.REDIRECT_URI + "&response_type=code&scope=guilds%20identify");
+});
+router.get('/template', function (req, res) {
+    res.redirect('https://discord.new/N3hmBUB5vqd7');
 });
 router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var obj, oathPath, oauth, exists, data, request, result, guilds, userData;
@@ -124,29 +132,25 @@ router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, v
                     userImage: "<img src=\"https://cdn.discordapp.com/avatars/" + result.id + "/" + result.avatar + ".webp\">",
                     servers: guilds,
                     username: result.username,
-                    commands: {},
-                    config: {}
+                    commands: null,
+                    config: null
                 };
                 res.render('user', userData);
                 return [2 /*return*/];
         }
     });
 }); });
-router.get('/:guildID(\\d+)', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var guildID, guildPath, config, commands, data;
-    return __generator(this, function (_a) {
-        try {
-            guildID = req.params.guildID;
-            guildPath = path_1.default.join(__dirname, '../../..', 'lib', 'servers', guildID);
-            config = JSON.parse(fs_1.default.readFileSync(guildPath + '/config.json', 'utf8'));
-            commands = JSON.parse(fs_1.default.readFileSync(guildPath + '/commands.json', 'utf8'));
-            res.status(200).render('./components/guildData', { config: config, commands: commands });
-        }
-        catch (error) {
-            data = "Sorry, Page Not Found or Doesn't Exists Anymore ! <a href='/'><button>Exit</button></a>";
-            res.status(404).render('error', { title: "Error", app: data });
-        }
-        return [2 /*return*/];
-    });
-}); });
+router.get('/:guildID(\\d+)', function (req, res) {
+    console.log('not auth case');
+    try {
+        var guildID = req.params.guildID;
+        var guildPath = path_1.default.join(__dirname, '../../..', 'lib', 'servers', guildID);
+        var commands = JSON.parse(fs_1.default.readFileSync(guildPath + '/commands.json', 'utf8'));
+        res.render('commands', { title: guildID, commands: commands });
+    }
+    catch (error) {
+        var data = "Sorry, Page Not Found or Doesn't Exists Anymore ! <a href='/'><button>Exit</button></a>";
+        res.status(404).render('error', { title: "Error", app: data });
+    }
+});
 exports.default = router;

@@ -15,7 +15,7 @@
       
       <select>
         <% servers.forEach((g) => { %>
-          <option value="<%= g.id %>"><%= g.name %></option>
+          <option value="<%= g.id %>"><a href="/<%= g.id %>"><%= g.name %></a></option>
         <% }); %>
       </select>
     </div>

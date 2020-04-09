@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include ('./components/head') %>
+  <link rel="stylesheet" href="./css/user.css">
+</head>
+<body>
+  <%- include ('./components/loader') %>
+
+  <div class="wrapper">
+    <div class="center">
+      <table id="commandsContainer">
+        <tr>
+          <h1>Available Commands (Read-Only)</h1>
+          <th></th>
+          <th></th>
+        </tr>
+        <% if (commands) { %>
+          <% for (cmd in commands) { %>
+            <tr>
+              <td class="command" style="border-bottom: .5px white dotted;"><%= cmd %></td>
+              <td class="response" style="text-align: left; border-bottom: .5px white dotted;"><%= commands[cmd] %></td>
+            </tr>
+          <% }; %>
+        <% } %>
+      </table>
+    </div>
+
+    <%- include ('./components/footer') %>
+
+  </div>
+
+  <%- include ('./components/particules') %>
+</body>
+</html>

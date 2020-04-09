@@ -11,8 +11,8 @@ export async function userUpdate(oldUser: User, newUser: User) {
   const currentGuild: Guild = (oldUser === undefined) ? newUser.presence.guild! : oldUser.presence.guild!;
   const config = await new DataWriter().read(path.join(serverDir, currentGuild.id, configFile));
   const allowLogs: boolean = config.Channels_Options.logs_channel.logs_options.users_info_changes.enabled;
-  // Stops here if the config says to do so
-  if (allowLogs) return;
+  
+  if (!allowLogs) return;
 
   const msgContent = config.Channels_Options.logs_channel.logs_options.users_info_changes.message
     .replace('{{user}}', newUser.username)
