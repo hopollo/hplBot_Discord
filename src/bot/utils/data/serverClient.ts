@@ -36,12 +36,12 @@ export class ServerClient {
   }
 
   public async generateNewClient(id: string) {
-    const serverClientPath = path.join(__dirname, '../..', Bot_Config.Servers_Config.servers_path, id);
-    const templatePath = path.join(__dirname, '../..', Bot_Config.Servers_Config.templates.path);
+    const serverClientPath = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path, id);
+    const templatePath = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.templates.path);
     const config = Bot_Config.Servers_Config.templates.configFile;
     const commands = Bot_Config.Servers_Config.templates.commandsFile;
-
-    fs.mkdir(serverClientPath, (err) => {
+    
+    return fs.mkdir(serverClientPath, (err) => {
       if (err) return console.error;
       // commands.json
       fs.copyFile(path.join(templatePath, commands), path.join(serverClientPath, commands), (err) => {

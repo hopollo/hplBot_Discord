@@ -38,32 +38,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
 var config_json_1 = require("../../../../config.json");
 var defaultCommands_1 = require("../../utils/commands/defaultCommands");
+var write_1 = require("../../utils/data/write");
 var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 function message(msg) {
-    var _a;
     return __awaiter(this, void 0, void 0, function () {
         var stableMode, msgContent, commandsPrefix, config, isCommand, invitesChannelID, isInvitesChannel, onlyCommands, onlyCreations;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
                     stableMode = config_json_1.Bot_Config.stable_mode.enabled;
                     msgContent = msg.content.toLowerCase();
                     commandsPrefix = config_json_1.Bot_Config.commands_prefix || '!';
-                    return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(serverDir, (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.id, configFile))); })];
+                    return [4 /*yield*/, new write_1.DataWriter().read(path_1.default.join(serverDir, msg.guild.id, configFile))];
                 case 1:
-                    config = _b.sent();
+                    config = _a.sent();
                     isCommand = msgContent.startsWith(commandsPrefix);
                     invitesChannelID = config.Channels_Options.invites_channel.id;
                     isInvitesChannel = msg.channel.id === invitesChannelID;
@@ -76,7 +69,7 @@ function message(msg) {
                     if (msg.author.bot || !isCommand)
                         return [2 /*return*/, undefined];
                     if (!stableMode)
-                        return [2 /*return*/, msg.reply('Maintenance en cours du bot, merci de réessayer plus tard.')];
+                        return [2 /*return*/, msg.reply('Maintenance en cours du bot, merci de réessayer plus tard.').catch(console.error)];
                     new defaultCommands_1.Command(msg);
                     return [2 /*return*/];
             }

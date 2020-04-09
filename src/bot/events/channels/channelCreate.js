@@ -38,24 +38,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var config_json_1 = require("../../../../config.json");
 var logs_1 = require("../../utils/logs/logs");
 var path_1 = __importDefault(require("path"));
+var write_1 = require("../../utils/data/write");
 function channelCreate(channel) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
         var config, allowLogs, author, msgContent;
         return __generator(this, function (_c) {
             switch (_c.label) {
-                case 0: return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path, channel.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))); })];
+                case 0: return [4 /*yield*/, new write_1.DataWriter().read(path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path, channel.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))];
                 case 1:
                     config = _c.sent();
                     allowLogs = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;

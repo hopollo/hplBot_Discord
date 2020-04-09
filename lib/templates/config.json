@@ -4,7 +4,7 @@
     "message": "{{command}} is not a command, try **!help**"
   },
   "Twitch_Bots_Config": {
-    "username": "hopollo",
+    "username": "",
     "Fossabot": false,
     "Moobot": false,
     "Nightbot": false,
@@ -18,7 +18,7 @@
       "welcome_message": "Bienvenue chez {{server}}, {{user}}"
     },
     "logs_channel": {
-      "id": 0,
+      "id": "",
       "logs_options": {
         "new_unique_users": {
           "enabled": true,
@@ -64,7 +64,7 @@
       }
     },
     "invites_channel": {
-      "id": 0,
+      "id": "",
       "post_invite_links": false,
       "invite_links_message": "Rejoindre **{{user}}** sur **{{channel}}** : {{inviteLink}}",
       "allow_only_commands_messages": true,

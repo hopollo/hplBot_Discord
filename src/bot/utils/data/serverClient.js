@@ -87,25 +87,24 @@ var ServerClient = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var serverClientPath, templatePath, config, commands;
             return __generator(this, function (_a) {
-                serverClientPath = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.servers_path, id);
-                templatePath = path_1.default.join(__dirname, '../..', config_json_1.Bot_Config.Servers_Config.templates.path);
+                serverClientPath = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path, id);
+                templatePath = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.templates.path);
                 config = config_json_1.Bot_Config.Servers_Config.templates.configFile;
                 commands = config_json_1.Bot_Config.Servers_Config.templates.commandsFile;
-                fs_1.default.mkdir(serverClientPath, function (err) {
-                    if (err)
-                        return console.error;
-                    // commands.json
-                    fs_1.default.copyFile(path_1.default.join(templatePath, commands), path_1.default.join(serverClientPath, commands), function (err) {
+                return [2 /*return*/, fs_1.default.mkdir(serverClientPath, function (err) {
                         if (err)
-                            console.error;
-                    });
-                    // config.json
-                    fs_1.default.copyFile(path_1.default.join(templatePath, config), path_1.default.join(serverClientPath, config), function (err) {
-                        if (err)
-                            console.error;
-                    });
-                });
-                return [2 /*return*/];
+                            return console.error;
+                        // commands.json
+                        fs_1.default.copyFile(path_1.default.join(templatePath, commands), path_1.default.join(serverClientPath, commands), function (err) {
+                            if (err)
+                                console.error;
+                        });
+                        // config.json
+                        fs_1.default.copyFile(path_1.default.join(templatePath, config), path_1.default.join(serverClientPath, config), function (err) {
+                            if (err)
+                                console.error;
+                        });
+                    })];
             });
         });
     };
