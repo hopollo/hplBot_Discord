@@ -10,10 +10,10 @@ export function ready(client: Client) {
   //Sets the game depending of if DevMode is ON or not
   if (!stableMode) {
     const game: string = Bot_Config.stable_mode.maintenance_game_message;
-    client.user!.setActivity(game, {type: 'CUSTOM_STATUS'});
+    client.user!.setActivity(game).catch(console.error);
   } else {
     const game: string = Bot_Config.stable_mode.stable_game_message;
-    client.user!.setActivity(game, {type: 'CUSTOM_STATUS'});
+    client.user!.setActivity(game).catch(console.error);
   }
 
   new ServerClient().updateClients(client.guilds);

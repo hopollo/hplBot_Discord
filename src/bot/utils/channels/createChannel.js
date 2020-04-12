@@ -49,9 +49,7 @@ var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 var ChannelCreator = /** @class */ (function () {
     function ChannelCreator(msg, slots) {
-        this._slots = slots;
-        this._msg = msg;
-        this.createNewVoiceChannel(this._msg, this._slots);
+        this.createNewVoiceChannel(msg, slots);
     }
     ChannelCreator.prototype.createNewVoiceChannel = function (msg, slotsLimit) {
         return __awaiter(this, void 0, void 0, function () {
@@ -75,7 +73,7 @@ var ChannelCreator = /** @class */ (function () {
                         if (slotsLimit >= vocalsMaxSlots)
                             return [2 /*return*/, msg.reply(reachedMessage)];
                         channelName = config.Vocals_Options.custom_vocals_titles
-                            .replace('{{user}}', this._msg.author.username);
+                            .replace('{{user}}', msg.author.username);
                         return [4 /*yield*/, msg.guild.channels.create(channelName, {
                                 type: "voice",
                                 userLimit: slotsLimit,
@@ -99,7 +97,7 @@ var ChannelCreator = /** @class */ (function () {
                             .replace('{{user}}', msg.author.username)
                             .replace('{{channel}}', newChannel.name);
                         if (allowLogs)
-                            new logs_1.Log(msg.client.user, msgContent);
+                            new logs_1.Log(msg.author.client.user, msgContent);
                         return [2 /*return*/];
                 }
             });

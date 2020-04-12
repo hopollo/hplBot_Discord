@@ -1,9 +1,10 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message, MessageEmbed, GuildMember } from "discord.js";
 import { Bot_Config } from '../../../../config.json';
 import path from "path";
 import { ChannelCreator } from "../channels/createChannel";
 import { DataWriter } from "../data/write";
 import { Scrapper } from "../scrapper/scrapper";
+import { PunishHandler } from "../userActions/punish";
 
 const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
 const configFile = Bot_Config.Servers_Config.templates.configFile;
@@ -37,11 +38,14 @@ export class Command {
       case '!addcom': this.addCom(this._content); break;
       case '!editcom': this.editCom(this._content); break;
       case '!delcom': this.delCom(this._content); break;
+      case '!ban': this.ban(this._content); break;
+      //case '!unban': this.unban(this._content); break;
+      case '!kick': this.kick(this._content); break;
       case '!duo': new ChannelCreator(this._msg, 2); break;
       case '!trio': new ChannelCreator(this._msg, 3); break;
       case '!squad': new ChannelCreator(this._msg, 5); break;
       case '!help': this.help(); break;
-      case customCommand: this.customChannel(this._cmd, +this._args); break;
+      case customCommand: this.customChannel(+this._args); break;
       case '!scrap': this.fecthBotCommmands(); break;
       default:
         this.fecthCommand(this._msg);
@@ -72,19 +76,21 @@ export class Command {
   private help() {
     const helpEmbed = new MessageEmbed()
       .setAuthor('HplBot Commands :')
-      .addField('Create a command, overrides existing from (!scrap)', '!addcom !hi Hello there')
+      .addField('Create a command', '!addcom !hi Hello there')
       .addField('Edit a command', '!editcom !hi Bonjour !')
       .addField('Delete a command', '!delcom !hi')
+      .addField('Ban a user (days)', '!ban XXXX 7 Spamming')
+      .addField('Kick a user', '!kick XXXX Scammer')
       //.addField('Always ignore a command from (!scrap)', '!bancom !setgame')
       //.addField('Protects a command from override with (!scrap)', '!lockcom !followage')
       .addField('Copy all twitch chat bot commands & override currents', '!scrap')
-      .addField('Creates a channel', '!duo, !trio, !squad, !custom NUMBER')
+      .addField('Creates a temporary channel', '!duo, !trio, !squad, !custom NUMBER')
       .setFooter('more info on twitter @HoPolloTV');
     this._msg.reply(helpEmbed);
   }
 
   private addCom(args: string) {
-    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return;
+    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return undefined;
 
     const match: any = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
     const command: string = match[2];
@@ -95,25 +101,75 @@ export class Command {
   }
 
   private editCom(args: string) {
-    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return;
+    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return undefined;
 
     const match: any = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
     const command: string = match[2];
-    const resp: string = match[3];
-    const data: { [command: string]: string; } = { [command] : resp };
+    const response: string = match[3];
+    const data: { [command: string]: string; } = { [command] : response };
 
     new DataWriter().appendTo(this.commandsFilePath, data);
   }
 
   private delCom(args: string) {
-    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return;
+    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return undefined;
 
     const match: any = args.match(/^(!\w+)\s(!\w+)/)
     const command = match[2];
     new DataWriter().removeTo(this.commandsFilePath, command); 
   }
   
-  private customChannel(cmd: string, slots: number) {
+  private customChannel(slots: number) {
     new ChannelCreator(this._msg, slots);
   }
+
+  private ban(args: string) {
+    const match: any = args.match(/^(!\w+)\s(\w+)\s(\w+)\s(.*)/);
+    const target: GuildMember = match[2];
+    const time: number = match[3];
+    const reason: string = match[4];
+
+    new PunishHandler(this._msg.member!, target, 'ban', time, reason);
+  }
+
+  private unban(args: string) {
+    const match: any = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const target: GuildMember = match[2];
+    const reason: string = match[3];
+
+    new PunishHandler(this._msg.member!, target, 'unban', undefined, reason);
+  }
+
+  private kick(args: string) {
+    const match: any = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const target: GuildMember = match[2];
+    const reason: string = match[3];
+
+    new PunishHandler(this._msg.member!, target, 'kick', undefined, reason);
+  }
+
+  /*
+  private mute(args: string) {
+    new PunishHandler();
+  }
+
+  private unmute(args: string) {
+
+  }
+
+  private purge(args: string) {
+    new Purger(source, number);
+  }
+
+  private banCom(args: string) {
+    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return undefined;
+    const match: any = args.match(/^(!\w+)\s(!\w+)/)
+    const command = match[2];
+    new DataWriter().appendTo(this.commandsFilePath, command)
+  }
+
+  private lockCom() {
+
+  }
+  */
 }

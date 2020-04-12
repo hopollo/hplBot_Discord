@@ -8,11 +8,11 @@ function ready(client) {
     //Sets the game depending of if DevMode is ON or not
     if (!stableMode) {
         var game = config_json_1.Bot_Config.stable_mode.maintenance_game_message;
-        client.user.setActivity(game, { type: 'CUSTOM_STATUS' });
+        client.user.setActivity(game).catch(console.error);
     }
     else {
         var game = config_json_1.Bot_Config.stable_mode.stable_game_message;
-        client.user.setActivity(game, { type: 'CUSTOM_STATUS' });
+        client.user.setActivity(game).catch(console.error);
     }
     new serverClient_1.ServerClient().updateClients(client.guilds);
 }

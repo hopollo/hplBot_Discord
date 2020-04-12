@@ -10,7 +10,7 @@ export class Mover {
     this.moveTo(this._user, this._destination);
   }
 
-  private async moveTo(target: GuildMember, destination: VoiceChannel) {
+  private moveTo(target: GuildMember, destination: VoiceChannel) {
     /* Status: 
     CONNECTED: 0
     CONNECTING: 1

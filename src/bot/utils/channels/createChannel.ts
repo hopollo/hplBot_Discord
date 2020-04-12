@@ -10,14 +10,8 @@ const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.
 const configFile = Bot_Config.Servers_Config.templates.configFile;
 
 export class ChannelCreator {
-  private readonly _slots: number;
-  private readonly _msg : Message;
-  
   constructor(msg: Message, slots: number) {
-    this._slots = slots;
-    this._msg = msg;
-
-    this.createNewVoiceChannel(this._msg, this._slots);
+    this.createNewVoiceChannel(msg, slots);
   }
 
   async createNewVoiceChannel(msg: Message, slotsLimit: number) {
@@ -36,7 +30,7 @@ export class ChannelCreator {
     if (slotsLimit >= vocalsMaxSlots) return msg.reply(reachedMessage);
 
     const channelName = config.Vocals_Options.custom_vocals_titles
-      .replace('{{user}}', this._msg.author.username);
+      .replace('{{user}}', msg.author.username);
 
     // Generate the temp channel with users specs
     const newChannel = await msg.guild!.channels.create(channelName, {
@@ -61,6 +55,6 @@ export class ChannelCreator {
       .replace('{{user}}', msg.author.username)
       .replace('{{channel}}', newChannel.name);
 
-    if (allowLogs) new Log(msg.client.user!, msgContent);
+    if (allowLogs) new Log(msg.author.client.user!, msgContent);
   };
 }

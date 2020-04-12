@@ -45,6 +45,7 @@ var path_1 = __importDefault(require("path"));
 var createChannel_1 = require("../channels/createChannel");
 var write_1 = require("../data/write");
 var scrapper_1 = require("../scrapper/scrapper");
+var punish_1 = require("../userActions/punish");
 var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 var commandFile = config_json_1.Bot_Config.Servers_Config.templates.commandsFile;
@@ -79,6 +80,13 @@ var Command = /** @class */ (function () {
                             case '!delcom':
                                 this.delCom(this._content);
                                 break;
+                            case '!ban':
+                                this.ban(this._content);
+                                break;
+                            //case '!unban': this.unban(this._content); break;
+                            case '!kick':
+                                this.kick(this._content);
+                                break;
                             case '!duo':
                                 new createChannel_1.ChannelCreator(this._msg, 2);
                                 break;
@@ -92,7 +100,7 @@ var Command = /** @class */ (function () {
                                 this.help();
                                 break;
                             case customCommand:
-                                this.customChannel(this._cmd, +this._args);
+                                this.customChannel(+this._args);
                                 break;
                             case '!scrap':
                                 this.fecthBotCommmands();
@@ -137,13 +145,15 @@ var Command = /** @class */ (function () {
     Command.prototype.help = function () {
         var helpEmbed = new discord_js_1.MessageEmbed()
             .setAuthor('HplBot Commands :')
-            .addField('Create a command, overrides existing from (!scrap)', '!addcom !hi Hello there')
+            .addField('Create a command', '!addcom !hi Hello there')
             .addField('Edit a command', '!editcom !hi Bonjour !')
             .addField('Delete a command', '!delcom !hi')
+            .addField('Ban a user (days)', '!ban XXXX 7 Spamming')
+            .addField('Kick a user', '!kick XXXX Scammer')
             //.addField('Always ignore a command from (!scrap)', '!bancom !setgame')
             //.addField('Protects a command from override with (!scrap)', '!lockcom !followage')
             .addField('Copy all twitch chat bot commands & override currents', '!scrap')
-            .addField('Creates a channel', '!duo, !trio, !squad, !custom NUMBER')
+            .addField('Creates a temporary channel', '!duo, !trio, !squad, !custom NUMBER')
             .setFooter('more info on twitter @HoPolloTV');
         this._msg.reply(helpEmbed);
     };
@@ -151,7 +161,7 @@ var Command = /** @class */ (function () {
         var _a;
         var _b;
         if (!((_b = this._msg.member) === null || _b === void 0 ? void 0 : _b.hasPermission('MANAGE_GUILD')))
-            return;
+            return undefined;
         var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
         var command = match[2];
         var resp = match[3];
@@ -162,23 +172,42 @@ var Command = /** @class */ (function () {
         var _a;
         var _b;
         if (!((_b = this._msg.member) === null || _b === void 0 ? void 0 : _b.hasPermission('MANAGE_GUILD')))
-            return;
+            return undefined;
         var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
         var command = match[2];
-        var resp = match[3];
-        var data = (_a = {}, _a[command] = resp, _a);
+        var response = match[3];
+        var data = (_a = {}, _a[command] = response, _a);
         new write_1.DataWriter().appendTo(this.commandsFilePath, data);
     };
     Command.prototype.delCom = function (args) {
         var _a;
         if (!((_a = this._msg.member) === null || _a === void 0 ? void 0 : _a.hasPermission('MANAGE_GUILD')))
-            return;
+            return undefined;
         var match = args.match(/^(!\w+)\s(!\w+)/);
         var command = match[2];
         new write_1.DataWriter().removeTo(this.commandsFilePath, command);
     };
-    Command.prototype.customChannel = function (cmd, slots) {
+    Command.prototype.customChannel = function (slots) {
         new createChannel_1.ChannelCreator(this._msg, slots);
+    };
+    Command.prototype.ban = function (args) {
+        var match = args.match(/^(!\w+)\s(\w+)\s(\w+)\s(.*)/);
+        var target = match[2];
+        var time = match[3];
+        var reason = match[4];
+        new punish_1.PunishHandler(this._msg.member, target, 'ban', time, reason);
+    };
+    Command.prototype.unban = function (args) {
+        var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var target = match[2];
+        var reason = match[3];
+        new punish_1.PunishHandler(this._msg.member, target, 'unban', undefined, reason);
+    };
+    Command.prototype.kick = function (args) {
+        var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var target = match[2];
+        var reason = match[3];
+        new punish_1.PunishHandler(this._msg.member, target, 'kick', undefined, reason);
     };
     return Command;
 }());

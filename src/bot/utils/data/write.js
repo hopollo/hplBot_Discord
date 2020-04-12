@@ -35,11 +35,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs_1 = __importDefault(require("fs"));
+var fs_1 = require("fs");
 var DataWriter = /** @class */ (function () {
     function DataWriter() {
     }
@@ -47,7 +44,7 @@ var DataWriter = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        fs_1.default.readFile(filePath, 'utf8', function (err, data) {
+                        fs_1.readFile(filePath, 'utf8', function (err, data) {
                             if (err)
                                 reject(err);
                             resolve(JSON.parse(data));
@@ -62,7 +59,7 @@ var DataWriter = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        fs_1.default.readFile(filePath, 'utf8', function (err, commands) {
+                        fs_1.readFile(filePath, 'utf8', function (err, commands) {
                             if (err)
                                 reject(err);
                             var json = JSON.parse(commands);
@@ -77,12 +74,12 @@ var DataWriter = /** @class */ (function () {
     DataWriter.prototype.appendTo = function (filePath, data) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                fs_1.default.readFile(filePath, 'utf8', function (err, oldData) {
+                fs_1.readFile(filePath, 'utf8', function (err, oldData) {
                     if (err)
                         return console.error;
                     var json = JSON.parse(oldData);
                     var newJSON = Object.assign(json, data);
-                    fs_1.default.writeFile(filePath, JSON.stringify(newJSON), function (err) {
+                    fs_1.writeFile(filePath, JSON.stringify(newJSON), function (err) {
                         if (err)
                             return console.error;
                     });
@@ -94,16 +91,16 @@ var DataWriter = /** @class */ (function () {
     DataWriter.prototype.removeTo = function (filePath, data) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                fs_1.default.readFile(filePath, 'utf8', function (err, oldJSON) {
+                fs_1.readFile(filePath, 'utf8', function (err, oldJSON) {
                     if (err)
                         return console.error;
                     if (!oldJSON)
                         return console.error(new Error(filePath + " : No data inside"));
                     var json = JSON.parse(oldJSON);
                     delete json[data.toString()];
-                    fs_1.default.writeFile(filePath, JSON.stringify(json), function (err) {
+                    fs_1.writeFile(filePath, JSON.stringify(json), function (err) {
                         if (err)
-                            return console.error(err);
+                            return console.error;
                     });
                 });
                 return [2 /*return*/];

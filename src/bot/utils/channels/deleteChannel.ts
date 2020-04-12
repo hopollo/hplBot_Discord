@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path = require('path');
 import { Log } from '../logs/logs';
 import { VoiceChannel, GuildManager } from 'discord.js';

@@ -35,25 +35,81 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __importDefault(require("path"));
-var config_json_1 = require("../../../../config.json");
-var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
-var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
-var Log = /** @class */ (function () {
-    function Log(initiator, message) {
-        this.initLog(initiator, message);
+var logs_1 = require("../logs/logs");
+var PunishHandler = /** @class */ (function () {
+    // TODO : HoPollo, replace type with proper list
+    function PunishHandler(initiator, target, type, time, reason, source) {
+        this._initiator = initiator;
+        this._target = target;
+        this._time = time;
+        this._reason = reason;
+        switch (type) {
+            case 'mute':
+                this.mute();
+                break;
+            case 'unmute':
+                this.unmute();
+                break;
+            case 'ban':
+                this.ban();
+                break;
+            case 'kick':
+                this.unban();
+                break;
+            case 'unban':
+                this.unban();
+                break;
+            case 'eject':
+                this.eject();
+                break;
+            default:
+                console.error("Error : Unkown Pusnish type (" + type + ")");
+                break;
+        }
     }
-    Log.prototype.initLog = function (user, message) {
+    PunishHandler.prototype.mute = function () { };
+    PunishHandler.prototype.unmute = function () { };
+    PunishHandler.prototype.ban = function () {
+        var _this = this;
+        if (!this._initiator.hasPermission('BAN_MEMBERS') &&
+            !this._target.bannable)
+            return undefined;
+        this._target.ban({ days: this._time, reason: this._reason })
+            .then(function () {
+            var msgContent = 'Banned';
+            // TODO (hopollo) : purge all his past msg option
+            new logs_1.Log(_this._initiator.user, msgContent);
+        })
+            .catch(function (err) {
+            _this._initiator.send("Error while trying to ban **" + _this._target + "**: *" + err.message + "*, Maybe try it from Discord.");
+        });
+    };
+    PunishHandler.prototype.unban = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
+                if (this._initiator.hasPermission('BAN_MEMBERS'))
+                    return [2 /*return*/, undefined];
                 return [2 /*return*/];
             });
         });
     };
-    return Log;
+    PunishHandler.prototype.eject = function () { };
+    PunishHandler.prototype.kick = function () {
+        var _this = this;
+        if (!this._initiator.hasPermission('KICK_MEMBERS') ||
+            !this._initiator.hasPermission('BAN_MEMBERS') &&
+                !this._target.kickable)
+            return undefined;
+        this._target.kick(this._reason)
+            .then(function () {
+            var msgContent = 'Kicked';
+            new logs_1.Log(_this._initiator.user, msgContent);
+        })
+            .catch(function (err) {
+            _this._initiator.send("Error while trying to kick **" + _this._target + "**: *" + err.message + "*, Maybe try it from Discord.");
+        });
+    };
+    return PunishHandler;
 }());
-exports.Log = Log;
+exports.PunishHandler = PunishHandler;
