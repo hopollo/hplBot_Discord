@@ -1,5 +1,5 @@
 import path from 'path';
-import { Invite, VoiceChannel, TextChannel, GuildChannel } from 'discord.js';
+import { Invite, VoiceChannel, TextChannel, GuildMember } from 'discord.js';
 import { Log } from '../logs/logs';
 import { DataWriter } from '../data/write';
 import { Bot_Config } from '../../../../config.json';
@@ -9,13 +9,15 @@ const configFile = Bot_Config.Servers_Config.templates.configFile;
 
 export class CreateInvite {
   private _source: VoiceChannel;
+  private _author: GuildMember;
   
-  constructor(channelSource: VoiceChannel) {
+  constructor(author: GuildMember, channelSource: VoiceChannel) {
+    this._author = author;
     this._source = channelSource;
-    this.createInviteToNewTempVoiceChannel(this._source);
+    this.createInviteToNewTempVoiceChannel(this._author, this._source);
   }
 
-  async createInviteToNewTempVoiceChannel(source: VoiceChannel) {
+  async createInviteToNewTempVoiceChannel(initiator: GuildMember, source: VoiceChannel) {
     const config = await new DataWriter().read(path.join(serverDir, source.guild!.id, configFile));
     const invitesChannelContainerID: string = config.Channels_Options.invites_channel.id;
     const allowLogs: boolean = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
@@ -23,7 +25,7 @@ export class CreateInvite {
     const newChannelInvite: Invite = await source.createInvite({reason: 'Temporary Channel'});
 
     const inviteLink = config.Channels_Options.invites_channel.invite_links_message
-      .replace('{{user}}', source.client.user!.username)
+      .replace('{{user}}', initiator.user.username)
       .replace('{{channel}}', source.name)
       .replace('{{inviteLink}}', newChannelInvite.url);
 
@@ -32,11 +34,11 @@ export class CreateInvite {
     if (invitationToShare) invitationToShare.send(inviteLink);
 
     if (!allowLogs) return;
-    const author = source.client.user;
+    const author = initiator.user.username;
     const msgContent = config.Channels_Options.logs_channel.logs_options.channels_creations.message
-      .replace('{{user}}', author?.username)
+      .replace('{{user}}', author)
       .replace('{{channel}}', source.name);
 
-    new Log(author!, msgContent);
+    new Log(initiator.user, msgContent);
   }
 }

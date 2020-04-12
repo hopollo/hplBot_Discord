@@ -56,14 +56,16 @@ function guildMemberAdd(member) {
                     allowWelcome = config.Channels_Options.welcome_channel.allow_welcome;
                     allowLogs = config.Channels_Options.logs_channel.logs_options.server_joins.enabled;
                     if (!allowWelcome)
-                        return [2 /*return*/];
+                        return [2 /*return*/, undefined];
                     channel = member.guild.systemChannel;
                     welcomeMsg = config.Channels_Options.welcome_channel.welcome_message
                         .replace('{{user}}', member.user.username)
                         .repalce('{{server}}', member.guild.name);
-                    channel.send(welcomeMsg);
+                    return [4 /*yield*/, channel.send(welcomeMsg)];
+                case 2:
+                    _a.sent();
                     if (!allowLogs)
-                        return [2 /*return*/];
+                        return [2 /*return*/, undefined];
                     author = member.user.username;
                     msgContent = config.Channels_Options.logs_channel.logs_options.server_joins.message
                         .replace('{{user}}', author);

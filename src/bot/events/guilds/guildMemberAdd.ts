@@ -1,4 +1,4 @@
-import { GuildMember, TextChannel} from "discord.js";
+import { GuildMember, TextChannel } from "discord.js";
 import { Bot_Config } from '../../../../config.json';
 import path from "path";
 import { Log } from "../../utils/logs/logs";
@@ -12,16 +12,16 @@ export async function guildMemberAdd(member: GuildMember) {
   const allowWelcome: boolean = config.Channels_Options.welcome_channel.allow_welcome;
   const allowLogs: boolean = config.Channels_Options.logs_channel.logs_options.server_joins.enabled;
 
-  if (!allowWelcome) return; 
+  if (!allowWelcome) return undefined;
 
-  let channel: TextChannel = member.guild.systemChannel!;
+  const channel: TextChannel = member.guild.systemChannel!;
   const welcomeMsg: string = config.Channels_Options.welcome_channel.welcome_message
     .replace('{{user}}', member.user.username)
-    .repalce('{{server}}', member.guild.name)
+    .repalce('{{server}}', member.guild.name);
   
-  channel.send(welcomeMsg);
+  await channel.send(welcomeMsg);
 
-  if (!allowLogs) return;
+  if (!allowLogs) return undefined;
 
   const author = member.user.username;
   const msgContent = config.Channels_Options.logs_channel.logs_options.server_joins.message

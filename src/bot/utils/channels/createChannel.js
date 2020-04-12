@@ -91,7 +91,7 @@ var ChannelCreator = /** @class */ (function () {
                             msg.delete({ timeout: msgDeleteIdle }).catch(console.error);
                         // Create an invite for the new temp channel
                         if (shareInvite)
-                            new createInvite_1.CreateInvite(newChannel);
+                            new createInvite_1.CreateInvite(msg.member, newChannel);
                         // Moves the user into his new temporary channel feature
                         if (moveCreator)
                             new move_1.Mover(msg.member, newChannel);

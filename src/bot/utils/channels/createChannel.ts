@@ -52,7 +52,7 @@ export class ChannelCreator {
     if (deleteCreationCommand) msg.delete({timeout: msgDeleteIdle}).catch(console.error);
 
     // Create an invite for the new temp channel
-    if (shareInvite) new CreateInvite(newChannel);
+    if (shareInvite) new CreateInvite(msg.member!, newChannel);
 
     // Moves the user into his new temporary channel feature
     if (moveCreator) new Mover(msg.member!, newChannel);

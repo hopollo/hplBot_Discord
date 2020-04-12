@@ -4,3 +4,4 @@
 *.css.map
 node_modules/
 lib/servers/*
+*.rest

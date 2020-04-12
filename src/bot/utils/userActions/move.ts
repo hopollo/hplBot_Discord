@@ -10,7 +10,7 @@ export class Mover {
     this.moveTo(this._user, this._destination);
   }
 
-  private moveTo(target: GuildMember, destination: VoiceChannel) {
+  private async moveTo(target: GuildMember, destination: VoiceChannel) {
     /* Status: 
     CONNECTED: 0
     CONNECTING: 1
@@ -18,8 +18,9 @@ export class Mover {
     RECONNECTING: 3
     DISCONNECTED: 4
     */
-    if (target.voice.connection!.status === 0) {
-      target.voice.setChannel(destination, 'Moved to own temp channel').catch(console.error);
+    if (target.voice !== undefined) {
+      target.voice.setChannel(destination, 'Moved to own temp channel')
+        .catch(err => { /* DONT WANT TO SEE THOSE */ });
     }
   }
 }

@@ -83,27 +83,28 @@ var ChannelDeleter = /** @class */ (function () {
         }); });
     };
     ChannelDeleter.prototype.deleteTempChannel = function (target) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var config, allowDeletion, usersCount, reason, msgContent;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var config, allowDeletion, usersCount;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0: return [4 /*yield*/, new write_1.DataWriter().read(path.join(serverDir, target.guild.id, configFile))];
                     case 1:
-                        config = _b.sent();
+                        config = _a.sent();
                         allowDeletion = config.Vocals_Options.purge_options.purge_empty_channels;
                         if (!allowDeletion)
-                            return [2 /*return*/];
+                            return [2 /*return*/, undefined];
                         usersCount = target.members.array().length;
-                        if (usersCount !== 0 || !target.deletable)
-                            return [2 /*return*/];
-                        target.delete();
-                        reason = 'EmptyTempChannel';
-                        msgContent = config.Channels_Options.logs_channel.logs_options.channels_deletions.message
-                            .replace("{{user}}", (_a = target.client.user) === null || _a === void 0 ? void 0 : _a.username)
-                            .replace("{{channel}}", target.name)
-                            .replace("{{reason}}", reason);
-                        new logs_1.Log(target.client.user, msgContent);
+                        if (usersCount > 0 || !target.deletable)
+                            return [2 /*return*/, undefined];
+                        target.delete().then(function () {
+                            var _a;
+                            var reason = 'EmptyTempChannel';
+                            var msgContent = config.Channels_Options.logs_channel.logs_options.channels_deletions.message
+                                .replace("{{user}}", (_a = target.client.user) === null || _a === void 0 ? void 0 : _a.username)
+                                .replace("{{channel}}", target.name)
+                                .replace("{{reason}}", reason);
+                            new logs_1.Log(target.client.user, msgContent);
+                        }).catch(function (err) { });
                         return [2 /*return*/];
                 }
             });

@@ -46,26 +46,26 @@ var config_json_1 = require("../../../../config.json");
 var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 var CreateInvite = /** @class */ (function () {
-    function CreateInvite(channelSource) {
+    function CreateInvite(author, channelSource) {
+        this._author = author;
         this._source = channelSource;
-        this.createInviteToNewTempVoiceChannel(this._source);
+        this.createInviteToNewTempVoiceChannel(this._author, this._source);
     }
-    CreateInvite.prototype.createInviteToNewTempVoiceChannel = function (source) {
-        var _a;
+    CreateInvite.prototype.createInviteToNewTempVoiceChannel = function (initiator, source) {
         return __awaiter(this, void 0, void 0, function () {
             var config, invitesChannelContainerID, allowLogs, newChannelInvite, inviteLink, invitationToShare, author, msgContent;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0: return [4 /*yield*/, new write_1.DataWriter().read(path_1.default.join(serverDir, source.guild.id, configFile))];
                     case 1:
-                        config = _b.sent();
+                        config = _a.sent();
                         invitesChannelContainerID = config.Channels_Options.invites_channel.id;
                         allowLogs = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
                         return [4 /*yield*/, source.createInvite({ reason: 'Temporary Channel' })];
                     case 2:
-                        newChannelInvite = _b.sent();
+                        newChannelInvite = _a.sent();
                         inviteLink = config.Channels_Options.invites_channel.invite_links_message
-                            .replace('{{user}}', source.client.user.username)
+                            .replace('{{user}}', initiator.user.username)
                             .replace('{{channel}}', source.name)
                             .replace('{{inviteLink}}', newChannelInvite.url);
                         invitationToShare = source.guild.channels.cache.get(invitesChannelContainerID);
@@ -73,11 +73,11 @@ var CreateInvite = /** @class */ (function () {
                             invitationToShare.send(inviteLink);
                         if (!allowLogs)
                             return [2 /*return*/];
-                        author = source.client.user;
+                        author = initiator.user.username;
                         msgContent = config.Channels_Options.logs_channel.logs_options.channels_creations.message
-                            .replace('{{user}}', (_a = author) === null || _a === void 0 ? void 0 : _a.username)
+                            .replace('{{user}}', author)
                             .replace('{{channel}}', source.name);
-                        new logs_1.Log(author, msgContent);
+                        new logs_1.Log(initiator.user, msgContent);
                         return [2 /*return*/];
                 }
             });
