@@ -54,7 +54,6 @@ var Command = /** @class */ (function () {
         this._msg = msg;
         this._content = msg.content;
         this._cmd = this._content.toLowerCase().split(' ')[0];
-        this._args = this._content.split(' ').slice(1);
         this.commandsFilePath = path_1.default.join(serverDir, msg.guild.id, commandFile);
         this.processMsg(this._msg);
     }
@@ -72,20 +71,29 @@ var Command = /** @class */ (function () {
                         customCommand = this._cfg.Vocals_Options.creation_command;
                         switch (this._cmd) {
                             case '!addcom':
-                                this.addCom(this._content);
+                                this.addCom();
                                 break;
                             case '!editcom':
-                                this.editCom(this._content);
+                                this.editCom();
                                 break;
                             case '!delcom':
-                                this.delCom(this._content);
+                                this.delCom();
                                 break;
                             case '!ban':
-                                this.ban(this._content);
+                                this.ban();
                                 break;
-                            //case '!unban': this.unban(this._content); break;
+                            //case '!unban': this.unban(); break;
                             case '!kick':
-                                this.kick(this._content);
+                                this.kick();
+                                break;
+                            case '!mute':
+                                this.mute();
+                                break;
+                            case '!unmute':
+                                this.unmute();
+                                break;
+                            case '!eject':
+                                this.eject();
                                 break;
                             case '!duo':
                                 new createChannel_1.ChannelCreator(this._msg, 2);
@@ -100,7 +108,7 @@ var Command = /** @class */ (function () {
                                 this.help();
                                 break;
                             case customCommand:
-                                this.customChannel(+this._args);
+                                this.customChannel();
                                 break;
                             case '!scrap':
                                 this.fecthBotCommmands();
@@ -150,6 +158,9 @@ var Command = /** @class */ (function () {
             .addField('Delete a command', '!delcom !hi')
             .addField('Ban a user (days)', '!ban XXXX 7 Spamming')
             .addField('Kick a user', '!kick XXXX Scammer')
+            .addField('Mute a user', '!mute XXXX Too loud & annoying')
+            .addField('Unmute a user', '!unmute XXXX Wrote apologies')
+            .addField('Eject a user from a voice channel', '!eject XXXX AFK & mic open')
             //.addField('Always ignore a command from (!scrap)', '!bancom !setgame')
             //.addField('Protects a command from override with (!scrap)', '!lockcom !followage')
             .addField('Copy all twitch chat bot commands & override currents', '!scrap')
@@ -157,57 +168,77 @@ var Command = /** @class */ (function () {
             .setFooter('more info on twitter @HoPolloTV');
         this._msg.reply(helpEmbed);
     };
-    Command.prototype.addCom = function (args) {
+    Command.prototype.addCom = function () {
         var _a;
         var _b;
         if (!((_b = this._msg.member) === null || _b === void 0 ? void 0 : _b.hasPermission('MANAGE_GUILD')))
             return undefined;
-        var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
         var command = match[2];
         var resp = match[3];
         var data = (_a = {}, _a[command] = resp, _a);
         new write_1.DataWriter().appendTo(this.commandsFilePath, data);
     };
-    Command.prototype.editCom = function (args) {
+    Command.prototype.editCom = function () {
         var _a;
         var _b;
         if (!((_b = this._msg.member) === null || _b === void 0 ? void 0 : _b.hasPermission('MANAGE_GUILD')))
             return undefined;
-        var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
         var command = match[2];
         var response = match[3];
         var data = (_a = {}, _a[command] = response, _a);
         new write_1.DataWriter().appendTo(this.commandsFilePath, data);
     };
-    Command.prototype.delCom = function (args) {
+    Command.prototype.delCom = function () {
         var _a;
         if (!((_a = this._msg.member) === null || _a === void 0 ? void 0 : _a.hasPermission('MANAGE_GUILD')))
             return undefined;
-        var match = args.match(/^(!\w+)\s(!\w+)/);
+        var match = this._content.match(/^(!\w+)\s(!\w+)/);
         var command = match[2];
         new write_1.DataWriter().removeTo(this.commandsFilePath, command);
     };
-    Command.prototype.customChannel = function (slots) {
-        new createChannel_1.ChannelCreator(this._msg, slots);
+    Command.prototype.customChannel = function () {
+        var match = this._content.match(/^(!\w+)\s(!\w+)/);
+        var slots = match[2];
+        new createChannel_1.ChannelCreator(this._msg, +slots);
     };
-    Command.prototype.ban = function (args) {
-        var match = args.match(/^(!\w+)\s(\w+)\s(\w+)\s(.*)/);
+    Command.prototype.ban = function () {
+        var match = this._content.match(/^(!\w+)\s(\w+)\s(\w+)\s(.*)/);
         var target = match[2];
         var time = match[3];
         var reason = match[4];
         new punish_1.PunishHandler(this._msg.member, target, 'ban', time, reason);
     };
-    Command.prototype.unban = function (args) {
-        var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    Command.prototype.unban = function () {
+        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
         var target = match[2];
         var reason = match[3];
         new punish_1.PunishHandler(this._msg.member, target, 'unban', undefined, reason);
     };
-    Command.prototype.kick = function (args) {
-        var match = args.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    Command.prototype.kick = function () {
+        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
         var target = match[2];
         var reason = match[3];
         new punish_1.PunishHandler(this._msg.member, target, 'kick', undefined, reason);
+    };
+    Command.prototype.eject = function () {
+        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var target = match[2];
+        var reason = match[3];
+        new punish_1.PunishHandler(this._msg.member, target, 'eject', undefined, reason);
+    };
+    Command.prototype.mute = function () {
+        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var target = match[2];
+        var reason = match[3];
+        new punish_1.PunishHandler(this._msg.member, target, 'mute', undefined, reason);
+    };
+    Command.prototype.unmute = function () {
+        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var target = match[2];
+        var reason = match[3];
+        new punish_1.PunishHandler(this._msg.member, target, 'unmute', undefined, reason);
     };
     return Command;
 }());

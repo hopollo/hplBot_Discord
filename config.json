@@ -4,7 +4,7 @@
     "stable_mode": {
       "enabled": true,
       "maintenance_game_message": "Maintenance...",
-      "stable_game_message": "!help | hplbot.com"
+      "stable_game_message": "!help"
     },
     "Servers_Config": {
       "servers_path": "lib/servers",

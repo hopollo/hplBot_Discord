@@ -43,24 +43,26 @@ var PunishHandler = /** @class */ (function () {
         this._initiator = initiator;
         this._target = target;
         this._time = time;
+        this._type = type;
         this._reason = reason;
-        switch (type) {
-            case 'mute':
+        this._channel = source;
+        switch (this._type) {
+            case "ban":
                 this.mute();
                 break;
-            case 'unmute':
+            case "unmute":
                 this.unmute();
                 break;
-            case 'ban':
+            case "ban":
                 this.ban();
                 break;
-            case 'kick':
+            case "kick":
+                this.kick();
+                break;
+            case "unban":
                 this.unban();
                 break;
-            case 'unban':
-                this.unban();
-                break;
-            case 'eject':
+            case "eject":
                 this.eject();
                 break;
             default:
@@ -68,8 +70,39 @@ var PunishHandler = /** @class */ (function () {
                 break;
         }
     }
-    PunishHandler.prototype.mute = function () { };
-    PunishHandler.prototype.unmute = function () { };
+    /**
+     * Mute an User
+     */
+    PunishHandler.prototype.mute = function () {
+        var _this = this;
+        if (!this._initiator.hasPermission('MUTE_MEMBERS'))
+            return undefined;
+        this._target.voice.setMute(true, this._reason).then(function () {
+            var msgContent = _this._initiator.displayName + " Muted : **" + _this._target.displayName + "** (Reason : " + _this._reason + ")";
+            new logs_1.Log(_this._initiator.user, msgContent);
+        })
+            .catch(function (err) {
+            _this._initiator.send("Error while trying to mute **" + _this._target.displayName + "**: *" + err.message + "*, Maybe try it from Discord.");
+        });
+    };
+    /**
+     * Unmute an User
+     */
+    PunishHandler.prototype.unmute = function () {
+        var _this = this;
+        if (!this._initiator.hasPermission('MUTE_MEMBERS'))
+            return undefined;
+        this._target.voice.setMute(false, this._reason).then(function () {
+            var msgContent = _this._initiator.displayName + " Unmuted : **" + _this._target.displayName + "** (Reason : " + _this._reason + ")";
+            new logs_1.Log(_this._initiator.user, msgContent);
+        })
+            .catch(function (err) {
+            _this._initiator.send("Error while trying to unmute **" + _this._target.displayName + "**: *" + err.message + "*, Maybe try it from Discord.");
+        });
+    };
+    /**
+     * Ban an User (in days)
+     */
     PunishHandler.prototype.ban = function () {
         var _this = this;
         if (!this._initiator.hasPermission('BAN_MEMBERS') &&
@@ -77,24 +110,56 @@ var PunishHandler = /** @class */ (function () {
             return undefined;
         this._target.ban({ days: this._time, reason: this._reason })
             .then(function () {
-            var msgContent = 'Banned';
+            var msgContent = _this._initiator.displayName + " Banned : **" + _this._target.displayName + "**, " + _this._time + "d (Reason : " + _this._reason + ")";
             // TODO (hopollo) : purge all his past msg option
             new logs_1.Log(_this._initiator.user, msgContent);
         })
             .catch(function (err) {
-            _this._initiator.send("Error while trying to ban **" + _this._target + "**: *" + err.message + "*, Maybe try it from Discord.");
+            _this._initiator.send("Error while trying to ban **" + _this._target.displayName + "**: *" + err.message + "*, Maybe try it from Discord.");
         });
     };
+    /**
+     * Unban an User
+     */
     PunishHandler.prototype.unban = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
             return __generator(this, function (_a) {
                 if (this._initiator.hasPermission('BAN_MEMBERS'))
                     return [2 /*return*/, undefined];
+                //TODO: (hopollo) : Finish unban feature
+                //this._initiator.send('Feature not available yet');
+                this._initiator.guild.fetchBans()
+                    .then(function (res) { return res.toJSON(); })
+                    .then(console.log)
+                    .catch(function (err) {
+                    _this._initiator.send("Error while trying to unban **" + _this._target.displayName + "**: *" + err.message + "*, Maybe try it from Discord.");
+                });
                 return [2 /*return*/];
             });
         });
     };
-    PunishHandler.prototype.eject = function () { };
+    /**
+     * Ejects an User from his current VoiceChannel
+     */
+    PunishHandler.prototype.eject = function () {
+        var _this = this;
+        if (!this._initiator.hasPermission('MANAGE_CHANNELS') ||
+            !this._initiator.hasPermission('KICK_MEMBERS') &&
+                !this._target.kickable)
+            return undefined;
+        this._target.voice.kick(this._reason)
+            .then(function () {
+            var msgContent = _this._initiator.displayName + " Ejected : **" + _this._target.displayName + "** (Reason : " + _this._reason + ")";
+            new logs_1.Log(_this._initiator.user, msgContent);
+        })
+            .catch(function (err) {
+            _this._initiator.send("Error while trying to eject **" + _this._target.displayName + "**: *" + err.message + "*, Maybe try it from Discord.");
+        });
+    };
+    /**
+     * Kick an User from the Guild
+     */
     PunishHandler.prototype.kick = function () {
         var _this = this;
         if (!this._initiator.hasPermission('KICK_MEMBERS') ||
