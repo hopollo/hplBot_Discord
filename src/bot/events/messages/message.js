@@ -43,14 +43,18 @@ var path_1 = __importDefault(require("path"));
 var config_json_1 = require("../../../../config.json");
 var defaultCommands_1 = require("../../utils/commands/defaultCommands");
 var write_1 = require("../../utils/data/write");
-var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
-var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
+var dm_1 = require("../../utils/dm/dm");
 function message(msg) {
     return __awaiter(this, void 0, void 0, function () {
-        var stableMode, msgContent, commandsPrefix, config, isCommand, invitesChannelID, isInvitesChannel, onlyCommands, onlyCreations;
+        var serverDir, configFile, stableMode, msgContent, commandsPrefix, config, isCommand, invitesChannelID, isInvitesChannel, onlyCommands, onlyCreations, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    if (msg.channel.type == "dm")
+                        return [2 /*return*/, new dm_1.DM(msg)];
+                    serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
+                    configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
                     stableMode = config_json_1.Bot_Config.stable_mode.enabled;
                     msgContent = msg.content.toLowerCase();
                     commandsPrefix = config_json_1.Bot_Config.commands_prefix || '!';
@@ -71,7 +75,12 @@ function message(msg) {
                     if (!stableMode)
                         return [2 /*return*/, msg.reply('Maintenance en cours du bot, merci de réessayer plus tard.').catch(console.error)];
                     new defaultCommands_1.Command(msg);
-                    return [2 /*return*/];
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_1 = _a.sent();
+                    console.error;
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
             }
         });
     });

@@ -43,14 +43,16 @@ var config_json_1 = require("../../../../config.json");
 var path_1 = __importDefault(require("path"));
 var logs_1 = require("../../utils/logs/logs");
 var write_1 = require("../../utils/data/write");
-var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
-var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 function guildMemberAdd(member) {
     return __awaiter(this, void 0, void 0, function () {
-        var config, allowWelcome, allowLogs, channel, welcomeMsg, author, msgContent;
+        var serverDir, configFile, config, allowWelcome, allowLogs, channel, welcomeMsg, author, msgContent, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, new write_1.DataWriter().read(path_1.default.join(serverDir, member.guild.id, configFile))];
+                case 0:
+                    _a.trys.push([0, 3, , 4]);
+                    serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
+                    configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
+                    return [4 /*yield*/, new write_1.DataWriter().read(path_1.default.join(serverDir, member.guild.id, configFile))];
                 case 1:
                     config = _a.sent();
                     allowWelcome = config.Channels_Options.welcome_channel.allow_welcome;
@@ -70,7 +72,12 @@ function guildMemberAdd(member) {
                     msgContent = config.Channels_Options.logs_channel.logs_options.server_joins.message
                         .replace('{{user}}', author);
                     new logs_1.Log(member.user, msgContent);
-                    return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 3:
+                    error_1 = _a.sent();
+                    console.error;
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     });

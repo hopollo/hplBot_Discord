@@ -50,15 +50,16 @@ var logs_1 = require("../../utils/logs/logs");
 var config_json_1 = require("../../../../config.json");
 var path_1 = __importDefault(require("path"));
 var deleteChannel_1 = require("../../utils/channels/deleteChannel");
-var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
-var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 function voiceStateUpdate(oldState, newState) {
     var _a, _b, _c, _d, _e;
     return __awaiter(this, void 0, void 0, function () {
-        var currentGuild, config, allowLogs, msgContent, msgContent;
+        var serverDir, configFile, currentGuild, config, allowLogs, msgContent, msgContent, error_1;
         return __generator(this, function (_f) {
             switch (_f.label) {
                 case 0:
+                    _f.trys.push([0, 2, , 3]);
+                    serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
+                    configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
                     currentGuild = (oldState === undefined) ? newState.guild : oldState.guild;
                     return [4 /*yield*/, Promise.resolve().then(function () { return __importStar(require(path_1.default.join(serverDir, currentGuild.id, configFile))); })];
                 case 1:
@@ -85,7 +86,12 @@ function voiceStateUpdate(oldState, newState) {
                         // Handles disconnect
                         new deleteChannel_1.ChannelDeleter().checkUsersOf(oldState.channel);
                     }
-                    return [2 /*return*/];
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_1 = _f.sent();
+                    console.error;
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
             }
         });
     });

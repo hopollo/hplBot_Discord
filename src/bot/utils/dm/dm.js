@@ -35,42 +35,36 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var config_json_1 = require("../../../../config.json");
-var logs_1 = require("../../utils/logs/logs");
-var path_1 = __importDefault(require("path"));
-var write_1 = require("../../utils/data/write");
-function channelCreate(channel) {
-    return __awaiter(this, void 0, void 0, function () {
-        var config, allowLogs, author, msgContent, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 3, , 4]);
-                    return [4 /*yield*/, new write_1.DataWriter().read(path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path, channel.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))];
-                case 1:
-                    config = _a.sent();
-                    allowLogs = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
-                    if (!allowLogs)
-                        return [2 /*return*/];
-                    author = channel.guild.owner.user;
-                    return [4 /*yield*/, config.Channels_Options.logs_channel.logs_options.channels_creations.message
-                            .replace('{{user}}', author.username)
-                            .replace('{{channel}}', channel.name)];
-                case 2:
-                    msgContent = _a.sent();
-                    new logs_1.Log(author, msgContent);
-                    return [3 /*break*/, 4];
-                case 3:
-                    error_1 = _a.sent();
-                    console.error;
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
-            }
+var DM = /** @class */ (function () {
+    function DM(msg) {
+        this.processDM(msg);
+    }
+    DM.prototype.processDM = function (msg) {
+        return __awaiter(this, void 0, void 0, function () {
+            var author, msgContent, dm, error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        author = msg.author;
+                        msgContent = msg.content;
+                        return [4 /*yield*/, author.createDM()];
+                    case 1:
+                        dm = _a.sent();
+                        return [4 /*yield*/, dm.send("**Questions ? => https://twitter.com/HoPolloTV**")];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        error_1 = _a.sent();
+                        console.error;
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
         });
-    });
-}
-exports.channelCreate = channelCreate;
+    };
+    return DM;
+}());
+exports.DM = DM;

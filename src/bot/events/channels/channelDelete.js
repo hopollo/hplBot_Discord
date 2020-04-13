@@ -45,10 +45,12 @@ var logs_1 = require("../../utils/logs/logs");
 var write_1 = require("../../utils/data/write");
 function channelDelete(channel) {
     return __awaiter(this, void 0, void 0, function () {
-        var config, allowLogs, author, reason, msgContent;
+        var config, allowLogs, author, reason, msgContent, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, new write_1.DataWriter().read(path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path, channel.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))];
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, new write_1.DataWriter().read(path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path, channel.guild.id, config_json_1.Bot_Config.Servers_Config.templates.configFile))];
                 case 1:
                     config = _a.sent();
                     allowLogs = config.Channels_Options.logs_channel.logs_options.channels_deletions.enabled;
@@ -61,7 +63,12 @@ function channelDelete(channel) {
                         .replace('{{channel}}', channel.id)
                         .replace('{{reason}}', reason);
                     new logs_1.Log(author, msgContent);
-                    return [2 /*return*/];
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_1 = _a.sent();
+                    console.error;
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
             }
         });
     });
