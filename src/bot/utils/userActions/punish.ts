@@ -47,13 +47,14 @@ export class PunishHandler {
   private mute() {
     if (!this._initiator.hasPermission('MUTE_MEMBERS')) return undefined;
 
-    this._target.voice.setMute(true, this._reason).then(() => {
-      const msgContent = `${this._initiator.displayName} Muted : **${this._target.displayName}** (Reason : ${this._reason})`;
-      new Log(this._initiator.user, msgContent);
-    })
-    .catch((err: DiscordAPIError) => {
-      this._initiator.send(`Error while trying to mute **${this._target.displayName}**: *${err.message}*, Maybe try it from Discord.`);
-    });
+    this._target.voice.setMute(true, this._reason)
+      .then(() => {
+        const msgContent = `${this._initiator.displayName} Muted : **${this._target.displayName}** (Reason : ${this._reason})`;
+        new Log(this._initiator.user, msgContent);
+      })
+      .catch((err: DiscordAPIError) => {
+        this._initiator.send(`Error while trying to mute **${this._target.displayName}**: *${err.message}*, Maybe try it from Discord.`);
+      });
   }
   
   /**

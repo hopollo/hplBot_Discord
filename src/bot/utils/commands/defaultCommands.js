@@ -46,6 +46,7 @@ var createChannel_1 = require("../channels/createChannel");
 var write_1 = require("../data/write");
 var scrapper_1 = require("../scrapper/scrapper");
 var punish_1 = require("../userActions/punish");
+var purger_1 = require("../channels/purger");
 var serverDir = path_1.default.join(__dirname, '../../../..', config_json_1.Bot_Config.Servers_Config.servers_path);
 var configFile = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 var commandFile = config_json_1.Bot_Config.Servers_Config.templates.commandsFile;
@@ -104,6 +105,9 @@ var Command = /** @class */ (function () {
                             case '!squad':
                                 new createChannel_1.ChannelCreator(this._msg, 5);
                                 break;
+                            case '!purge':
+                                this.purge();
+                                break;
                             case '!help':
                                 this.help();
                                 break;
@@ -156,6 +160,7 @@ var Command = /** @class */ (function () {
             .addField('Create a command', '!addcom !hi Hello there')
             .addField('Edit a command', '!editcom !hi Bonjour !')
             .addField('Delete a command', '!delcom !hi')
+            .addField('Purge channel messages', '!purge 20')
             .addField('Ban a user (days)', '!ban XXXX 7 Spamming')
             .addField('Kick a user', '!kick XXXX Scammer')
             .addField('Mute a user', '!mute XXXX Too loud & annoying')
@@ -211,34 +216,39 @@ var Command = /** @class */ (function () {
         new punish_1.PunishHandler(this._msg.member, target, 'ban', time, reason);
     };
     Command.prototype.unban = function () {
-        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
         var target = match[2];
         var reason = match[3];
         new punish_1.PunishHandler(this._msg.member, target, 'unban', undefined, reason);
     };
     Command.prototype.kick = function () {
-        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
         var target = match[2];
         var reason = match[3];
         new punish_1.PunishHandler(this._msg.member, target, 'kick', undefined, reason);
     };
     Command.prototype.eject = function () {
-        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
         var target = match[2];
         var reason = match[3];
         new punish_1.PunishHandler(this._msg.member, target, 'eject', undefined, reason);
     };
     Command.prototype.mute = function () {
-        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
         var target = match[2];
         var reason = match[3];
         new punish_1.PunishHandler(this._msg.member, target, 'mute', undefined, reason);
     };
     Command.prototype.unmute = function () {
-        var match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+        var match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
         var target = match[2];
         var reason = match[3];
         new punish_1.PunishHandler(this._msg.member, target, 'unmute', undefined, reason);
+    };
+    Command.prototype.purge = function () {
+        var match = this._content.match(/^(!\w+)\s(\w+)/);
+        var length = match[2];
+        new purger_1.Purger(this._msg.member, this._msg.channel, +length);
     };
     return Command;
 }());

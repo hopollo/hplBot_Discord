@@ -1,10 +1,11 @@
-import { Message, MessageEmbed, GuildMember } from "discord.js";
+import { Message, MessageEmbed, GuildMember, TextChannel } from "discord.js";
 import { Bot_Config } from '../../../../config.json';
 import path from "path";
 import { ChannelCreator } from "../channels/createChannel";
 import { DataWriter } from "../data/write";
 import { Scrapper } from "../scrapper/scrapper";
 import { PunishHandler } from "../userActions/punish";
+import { Purger } from "../channels/purger";
 
 const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
 const configFile = Bot_Config.Servers_Config.templates.configFile;
@@ -44,6 +45,7 @@ export class Command {
       case '!duo': new ChannelCreator(this._msg, 2); break;
       case '!trio': new ChannelCreator(this._msg, 3); break;
       case '!squad': new ChannelCreator(this._msg, 5); break;
+      case '!purge': this.purge(); break;
       case '!help': this.help(); break;
       case customCommand: this.customChannel(); break;
       case '!scrap': this.fecthBotCommmands(); break;
@@ -79,6 +81,7 @@ export class Command {
       .addField('Create a command', '!addcom !hi Hello there')
       .addField('Edit a command', '!editcom !hi Bonjour !')
       .addField('Delete a command', '!delcom !hi')
+      .addField('Purge channel messages', '!purge 20')
       .addField('Ban a user (days)', '!ban XXXX 7 Spamming')
       .addField('Kick a user', '!kick XXXX Scammer')
       .addField('Mute a user', '!mute XXXX Too loud & annoying')
@@ -117,13 +120,13 @@ export class Command {
   private delCom() {
     if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return undefined;
 
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)/)
+    const match: any = this._content.match(/^(!\w+)\s(!\w+)/);
     const command = match[2];
     new DataWriter().removeTo(this.commandsFilePath, command); 
   }
   
   private customChannel() {
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)/)
+    const match: any = this._content.match(/^(!\w+)\s(!\w+)/);
     const slots: string = match[2];
 
     new ChannelCreator(this._msg, +slots);
@@ -139,7 +142,7 @@ export class Command {
   }
 
   private unban() {
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
     const target: GuildMember = match[2];
     const reason: string = match[3];
 
@@ -147,7 +150,7 @@ export class Command {
   }
 
   private kick() {
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
     const target: GuildMember = match[2];
     const reason: string = match[3];
 
@@ -155,7 +158,7 @@ export class Command {
   }
 
   private eject() {
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
     const target: GuildMember = match[2];
     const reason: string = match[3];
 
@@ -163,7 +166,7 @@ export class Command {
   }
 
   private mute() {
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
     const target: GuildMember = match[2];
     const reason: string = match[3];
 
@@ -171,18 +174,21 @@ export class Command {
   }
 
   private unmute() {
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
     const target: GuildMember = match[2];
     const reason: string = match[3];
 
     new PunishHandler(this._msg.member!, target, 'unmute', undefined, reason);
   }
-
-  /*
+  
   private purge() {
-    new Purger(source, number);
+    const match: any = this._content.match(/^(!\w+)\s(\w+)/);
+    const length: string = match[2];
+
+    new Purger(this._msg.member!, this._msg.channel as TextChannel, +length);
   }
 
+  /*
   private banCom() {
     if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return undefined;
     const match: any = this._content.match(/^(!\w+)\s(!\w+)/)

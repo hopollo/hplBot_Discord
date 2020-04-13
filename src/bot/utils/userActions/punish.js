@@ -77,7 +77,8 @@ var PunishHandler = /** @class */ (function () {
         var _this = this;
         if (!this._initiator.hasPermission('MUTE_MEMBERS'))
             return undefined;
-        this._target.voice.setMute(true, this._reason).then(function () {
+        this._target.voice.setMute(true, this._reason)
+            .then(function () {
             var msgContent = _this._initiator.displayName + " Muted : **" + _this._target.displayName + "** (Reason : " + _this._reason + ")";
             new logs_1.Log(_this._initiator.user, msgContent);
         })
