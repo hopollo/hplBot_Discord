@@ -4,7 +4,42 @@ window.onload = () => {
 }
 
 function openTab(evt, tabName) {
-  console.log(`openTab: ${evt} ${tabName}`);
+  const guildID = document.querySelector('select').value;
+  
+  fetch(`${guildID}/${tabName.toLowerCase()}`, 
+    {
+      headers: {
+        'authorization': window.location.href
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (tabName == "Commands") {
+        // Clear all commands
+        $('#commandsContainer').find('tr:not(".titles")').remove();
+        for (el in data) {
+          $(`#commandsContainer`).append(`
+            <tr>
+              <td class="command">${el}</td>
+              <td class="response">${data[el]}</td>
+              <td>
+                <button onClick="editCmd()">Edit</button>
+                <button onClick="deleteCmd()">Delete</button>  
+              </td>
+            </tr>
+          `);
+        }
+      } else {
+        for (el in data) {
+          $(`#configContainer #optionType`).append(`
+            <option value="">${el}</option>
+          `);
+        }
+      }
+      
+    })
+    .catch(console.error);
+
   let i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabContent");
   for (i = 0; i < tabcontent.length; i++) {
@@ -16,4 +51,31 @@ function openTab(evt, tabName) {
   }
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
+}
+
+function editCmd() {
+  alert('ok')
+}
+
+function deleteCmd() {
+  // delete selected command
+  const prompt = 
+  `
+    <div style='display: "flex"; flex-direction:"column";'>
+      <h3>Command delete</h3>
+      <p>Are you sure you want to delete : <span style='color:"red";'>TESTCMD</span></p>
+      <button class="confirm default" onClick="confirm">Confirm</button>
+      <button class="cancel red" onClick="cancel">Cancel</button>
+    </div>
+  `
+  $('.wrapper').prepend(prompt);
+}
+
+function cancel() {
+  console.log("cancelling action");
+}
+
+function confirm() {
+  console.log('confirm action');
+  
 }

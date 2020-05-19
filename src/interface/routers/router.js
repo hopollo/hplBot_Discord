@@ -49,8 +49,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var url_1 = __importStar(require("url"));
 var node_fetch_1 = __importDefault(require("node-fetch"));
-var fs_1 = __importDefault(require("fs"));
+var fs_1 = require("fs");
 var path_1 = __importDefault(require("path"));
+var config_json_1 = require("../../../config.json");
+var authMiddelware_1 = __importDefault(require("../middlewares/authMiddelware"));
+var commandsPath = config_json_1.Bot_Config.Servers_Config.templates.commandsFile;
+var configPath = config_json_1.Bot_Config.Servers_Config.templates.configFile;
 require('dotenv').config();
 var router = express_1.Router();
 router.get('/', function (req, res) {
@@ -74,7 +78,7 @@ router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, v
                 if (!obj.query.code)
                     return [2 /*return*/, res.send('Error while authenticating with Discord')];
                 oathPath = path_1.default.join(__dirname, '../../..', 'lib', 'oauths', obj.query.code.toString());
-                exists = fs_1.default.existsSync(oathPath);
+                exists = fs_1.existsSync(oathPath);
                 if (!!exists) return [3 /*break*/, 2];
                 data = {
                     "code": obj.query.code,
@@ -96,14 +100,14 @@ router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, v
                         .catch(function (err) { return res.send(err); })];
             case 1:
                 request = _a.sent();
-                fs_1.default.writeFile(oathPath, JSON.stringify(request), function (err) {
+                fs_1.writeFile(oathPath, JSON.stringify(request), function (err) {
                     if (err)
                         console.error;
                 });
                 oauth = request;
                 return [3 /*break*/, 3];
             case 2:
-                oauth = JSON.parse(fs_1.default.readFileSync(oathPath).toString());
+                oauth = JSON.parse(fs_1.readFileSync(oathPath).toString());
                 _a.label = 3;
             case 3: return [4 /*yield*/, node_fetch_1.default('https://discordapp.com/api/v6/users/@me', {
                     headers: {
@@ -121,8 +125,31 @@ router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, v
                     })
                         .then(function (res) { return res.json(); })
                         .then(function (guilds) {
+                        //let guildsResults: object[] = [];
                         return Object.values(guilds).filter(function (g) { return g.owner === true &&
-                            fs_1.default.existsSync(path_1.default.join(__dirname, '../../..', 'lib', 'servers', g.id)) === true; });
+                            fs_1.existsSync(path_1.default.join(__dirname, '../../..', 'lib', 'servers', g.id)) === true; });
+                        /*
+                         await guilds.forEach(async (g: Guild) => {
+                           const guildPath = path.join(__dirname, '../../..', 'lib', 'servers', g.id);
+                           
+                           if (!g.owner || !existsSync(guildPath)) return undefined;
+                           
+                           const guildName = g.name;
+                           const guildID = g.id;
+                           const commands = await JSON.parse(readFileSync(path.join(guildPath, commandsPath)).toString());
+                           const config = await JSON.parse(readFileSync(path.join(guildPath, configPath)).toString());
+                           const obj = {
+                             guildID,
+                             guildName,
+                             commands,
+                             config
+                           }
+                     
+                           guildsResults.push(obj);
+                         })
+                     
+                         return guildsResults;
+                         */
                     })
                         .catch(console.error)];
             case 5:
@@ -140,12 +167,29 @@ router.get('/callback', function (req, res) { return __awaiter(void 0, void 0, v
         }
     });
 }); });
+router.get('/:guildID/:type', authMiddelware_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var guildID, type, typeFile, filePath, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                guildID = req.params.guildID;
+                type = req.params.type;
+                typeFile = type + ".json";
+                filePath = path_1.default.join(__dirname, '../../..', 'lib', 'servers', guildID, typeFile);
+                return [4 /*yield*/, JSON.parse(fs_1.readFileSync(filePath).toString())];
+            case 1:
+                result = _a.sent();
+                res.status(200).json(result);
+                return [2 /*return*/];
+        }
+    });
+}); });
 router.get('/:guildID(\\d+)', function (req, res) {
     console.log('not auth case');
     try {
         var guildID = req.params.guildID;
         var guildPath = path_1.default.join(__dirname, '../../..', 'lib', 'servers', guildID);
-        var commands = JSON.parse(fs_1.default.readFileSync(guildPath + '/commands.json', 'utf8'));
+        var commands = JSON.parse(fs_1.readFileSync(guildPath + '/commands.json', 'utf8'));
         res.render('commands', { title: guildID, commands: commands });
     }
     catch (error) {

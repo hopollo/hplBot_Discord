@@ -1,8 +1,14 @@
 import { Router } from 'express';
 import url, { URLSearchParams } from 'url';
 import fetch from 'node-fetch';
-import fs from 'fs';
+import {writeFile, existsSync, readFileSync, readFile} from 'fs';
 import path from 'path';
+import { Guild } from 'discord.js';
+import { Bot_Config } from '../../../config.json';
+import mdLog from '../middlewares/authMiddelware';
+
+const commandsPath = Bot_Config.Servers_Config.templates.commandsFile;
+const configPath = Bot_Config.Servers_Config.templates.configFile;
 
 require('dotenv').config();
 
@@ -32,7 +38,7 @@ router.get('/callback', async (req, res) => {
 
   let oauth;
 
-  const exists = fs.existsSync(oathPath);
+  const exists = existsSync(oathPath);
   if (!exists) {
     const data = {
       "code" : obj.query.code,
@@ -54,13 +60,13 @@ router.get('/callback', async (req, res) => {
     .then(res => res.json())
     .catch(err => res.send(err));
 
-    fs.writeFile(oathPath, JSON.stringify(request), (err) => {
+    writeFile(oathPath, JSON.stringify(request), (err) => {
       if (err) console.error;
     });
 
     oauth = request;
   } else {
-    oauth = JSON.parse(fs.readFileSync(oathPath).toString());
+    oauth = JSON.parse(readFileSync(oathPath).toString());
   }
 
   const result = await fetch('https://discordapp.com/api/v6/users/@me', {
@@ -78,9 +84,33 @@ router.get('/callback', async (req, res) => {
   })
   .then(res => res.json())
   .then(guilds => {
+    //let guildsResults: object[] = [];
+    
     return Object.values(guilds).filter((g: any) => g.owner === true && 
-            fs.existsSync(path.join(__dirname, '../../..', 'lib', 'servers', g.id)) === true);
+            existsSync(path.join(__dirname, '../../..', 'lib', 'servers', g.id)) === true);
+    
+   /*
+    await guilds.forEach(async (g: Guild) => {
+      const guildPath = path.join(__dirname, '../../..', 'lib', 'servers', g.id);
+      
+      if (!g.owner || !existsSync(guildPath)) return undefined;
+      
+      const guildName = g.name;
+      const guildID = g.id;
+      const commands = await JSON.parse(readFileSync(path.join(guildPath, commandsPath)).toString());
+      const config = await JSON.parse(readFileSync(path.join(guildPath, configPath)).toString());
+      const obj = {
+        guildID,
+        guildName,
+        commands,
+        config
+      }
 
+      guildsResults.push(obj);
+    })
+
+    return guildsResults;
+    */
   })
   .catch(console.error);
 
@@ -98,12 +128,22 @@ router.get('/callback', async (req, res) => {
   // res.redirect(`/user/${result.username.toLowerCase()}`);
 });
 
+router.get('/:guildID/:type', mdLog, async (req, res) => {
+  const guildID = req.params.guildID;
+  const type = req.params.type;
+  const typeFile = `${type}.json`; 
+  const filePath = path.join(__dirname, '../../..', 'lib', 'servers', guildID, typeFile);
+  const result = await JSON.parse(readFileSync(filePath).toString());
+  
+  res.status(200).json(result);
+});
+
 router.get('/:guildID(\\d+)', (req, res) => {
   console.log('not auth case');
   try {
     const guildID = req.params.guildID;
     const guildPath = path.join(__dirname, '../../..', 'lib', 'servers', guildID);
-    const commands = JSON.parse(fs.readFileSync(guildPath + '/commands.json', 'utf8'));
+    const commands = JSON.parse(readFileSync(guildPath + '/commands.json', 'utf8'));
   
     res.render('commands', { title: guildID, commands: commands });
   } catch (error) {

@@ -1,0 +1,39 @@
+<% serversData.forEach(s => { %>
+  <div id="<%= s.guildID %>" class="tab" style="display: none;">
+    <button class="tablinks" onclick="openGuildTab(event, 'Commands')">Commands</button>
+    <button class="tablinks" onclick="openGuildTab(event, 'Config')">Config</button>
+  </div>
+
+  <div id="Commands" class="tabContent">
+    <table id="commandsContainer">
+      <tr>
+        <th>Command</th>
+        <th>Response</th>
+        <th>Actions</th>
+      </tr>
+      <% for (cmd in s.commands) { %>
+        <tr>
+          <td class="command"><%= cmd %></td>
+          <td class="response"><%= s.commands[cmd] %></td>
+          <td>
+            <button onclick="edit()">Edit</button>
+            <button onclick="remove()">Delete</button>
+          </td>
+        </tr>
+      <% }; %>
+    </table>
+  </div>
+  
+  <div id="Config" class="tabContent">
+    <div id="configContainer">
+       <h1>Choose an option :</h1>
+        <select id="optionType" onchange="openTab(event, this.value)">
+          <% for (type in s.config) { %>
+            <option value="<%= type%>"><%= type %></option>
+          <% }; %>
+        </select>
+    </div>
+  </div>
+<% }); %>
+
+<script src="./js/guildData.js"></script>

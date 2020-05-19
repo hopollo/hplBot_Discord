@@ -1,7 +1,8 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import path from 'path';
 import helmet from 'helmet';
+import bodyParser from 'body-parser';
 import router from './interface/routers/router';
 
 require('dotenv').config();
@@ -19,13 +20,18 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'interface', 'views'));
 app.use(express.static(path.join(__dirname, 'interface', 'public')));
 
-
-app.use(express.static(path.join(__dirname, 'interface', 'public')));
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 app.use('/', router);
 
 // 404 route
-app.use((req: express.Request, res: express.Response) => {
+app.use((req: Request, res: Response) => {
   res.status(404).render('error', {
     title: 'Error 404',
     app : `Oops ! Page Not Found or Doesn't Exists Anymore ! <a href='/'><button>Exit</button></a>`});
