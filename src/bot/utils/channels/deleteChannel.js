@@ -84,15 +84,30 @@ var ChannelDeleter = /** @class */ (function () {
     };
     ChannelDeleter.prototype.deleteTempChannel = function (target) {
         return __awaiter(this, void 0, void 0, function () {
-            var config, allowDeletion, usersCount;
+            var config, allowDeletion, invitesChannelContainerID, invites, usersCount;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, new write_1.DataWriter().read(path.join(serverDir, target.guild.id, configFile))];
+                    case 0:
+                        if (target.members.size !== 0)
+                            return [2 /*return*/, undefined];
+                        return [4 /*yield*/, new write_1.DataWriter().read(path.join(serverDir, target.guild.id, configFile))];
                     case 1:
                         config = _a.sent();
                         allowDeletion = config.Vocals_Options.purge_options.purge_empty_channels;
+                        invitesChannelContainerID = config.Channels_Options.invites_channel.id;
                         if (!allowDeletion)
                             return [2 /*return*/, undefined];
+                        return [4 /*yield*/, target.fetchInvites()];
+                    case 2:
+                        invites = _a.sent();
+                        invites.each(function (invite) {
+                            var _a;
+                            var inviteChannel = (_a = invite.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.get(invitesChannelContainerID);
+                            inviteChannel.messages.cache.each(function (msg) {
+                                if (msg.content.includes(invite.code) && msg.deletable)
+                                    return msg.delete();
+                            });
+                        });
                         usersCount = target.members.array().length;
                         if (usersCount > 0 || !target.deletable)
                             return [2 /*return*/, undefined];

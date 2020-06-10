@@ -1,6 +1,6 @@
 import path = require('path');
 import { Log } from '../logs/logs';
-import { VoiceChannel, GuildManager } from 'discord.js';
+import { VoiceChannel, GuildManager, TextChannel } from 'discord.js';
 import { Bot_Config } from '../../../../config.json';
 import { DataWriter } from '../data/write';
 
@@ -30,10 +30,22 @@ export class ChannelDeleter {
   }
   
   private async deleteTempChannel(target: VoiceChannel) {
+    if (target.members.size !== 0) return undefined;
+    
     const config = await new DataWriter().read(path.join(serverDir, target.guild.id, configFile));
     const allowDeletion = config.Vocals_Options.purge_options.purge_empty_channels;
+    const invitesChannelContainerID: string = config.Channels_Options.invites_channel.id;
 
     if (!allowDeletion) return undefined;
+    
+    const invites = await target.fetchInvites();
+    invites.each(invite => {
+      const inviteChannel = invite.guild?.channels.cache.get(invitesChannelContainerID) as TextChannel;
+      inviteChannel.messages.cache.each(msg => {
+        if (msg.content.includes(invite.code) && msg.deletable) return msg.delete();
+      });
+    });
+
     
     const usersCount = target.members.array().length;
     
@@ -47,6 +59,6 @@ export class ChannelDeleter {
         .replace("{{reason}}", reason);
   
       new Log(target.client.user!, msgContent);
-    }).catch(err => { /* DONT WANT TO SEE THOSE */});
+    }).catch(err => { /* DONT WANT TO SEE THOSE UNHANDLED ERRORS IN THE FUTURE */});
   }
 }
