@@ -34,4 +34,8 @@ app.use(function (req, res) {
 });
 app.listen(process.env.PORT || 5000, function () {
     console.log('Web interface => Running...');
+    //Anti Travis Idle
+    setInterval(function () {
+        console.log("Avoiding idle");
+    }, 5 * 60 * 1000);
 });
