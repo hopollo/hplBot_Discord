@@ -13,6 +13,7 @@
   "dependencies": {
     "@typeit/discord": "^1.0.12",
     "@types/helmet": "0.0.45",
+    "@types/mongoose": "^5.7.32",
     "@types/morgan": "^1.9.0",
     "@types/puppeteer": "^2.0.1",
     "@types/ws": "^7.2.3",
@@ -22,6 +23,7 @@
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "helmet": "^3.22.0",
+    "mongoose": "^5.9.25",
     "node-fetch": "^2.6.0",
     "path": "^0.12.7",
     "puppeteer": "^2.1.1"

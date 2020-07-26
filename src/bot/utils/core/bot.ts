@@ -12,7 +12,7 @@ import { guildDelete } from '../../events/guilds/guildDelete';
 
 export class HplBot {
   public start(token: string) {
-    console.log('Starting HplDiscordBot..');
+    console.log('Starting HplDiscordBot...');
 
     const client = new Client();
 

@@ -12,6 +12,6 @@ function mdLog(req, res, next) {
     var exists = fs_1.existsSync(authPath + '/' + code);
     if (exists)
         return next();
-    res.status(404).json('Acces denied');
+    res.status(404).json('Access denied');
 }
 exports.default = mdLog;

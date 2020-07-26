@@ -15,7 +15,7 @@ var HplBot = /** @class */ (function () {
     function HplBot() {
     }
     HplBot.prototype.start = function (token) {
-        console.log('Starting HplDiscordBot..');
+        console.log('Starting HplDiscordBot...');
         var client = new discord_js_1.Client();
         client.login(token);
         client.once('ready', function () { return ready_1.ready(client); });
