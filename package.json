@@ -24,7 +24,7 @@
     "fs": "0.0.1-security",
     "helmet": "^3.22.0",
     "mongoose": "^5.9.25",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "path": "^0.12.7",
     "puppeteer": "^2.1.1"
   },
