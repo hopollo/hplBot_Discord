@@ -79,7 +79,7 @@ const createVoiceChannel = async (
       name,
       type: 2,
       userLimit: slots,
-      parent: "691287474420580452"
+      parent: "464153673962881024"
     });
 
     // Move the owner inside;
