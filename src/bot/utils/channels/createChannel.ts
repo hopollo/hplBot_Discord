@@ -1,12 +1,16 @@
-import path from 'path';
-import { Bot_Config } from '../../../../config.json';
-import { Message, VoiceChannel } from 'discord.js';
-import { Log } from '../logs/logs';
-import { Mover } from '../userActions/move';
-import { CreateInvite } from '../invites/createInvite';
-import { DataWriter } from '../data/write';
+import path from "path";
+import { Bot_Config } from "../../../../config.json";
+import { ChannelType, Message } from "discord.js";
+import { Log } from "../logs/logs";
+import { Mover } from "../userActions/move";
+import { CreateInvite } from "../invites/createInvite";
+import { DataWriter } from "../data/write";
 
-const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
+const serverDir = path.join(
+  __dirname,
+  "../../../..",
+  Bot_Config.Servers_Config.servers_path
+);
 const configFile = Bot_Config.Servers_Config.templates.configFile;
 
 export class ChannelCreator {
@@ -15,46 +19,62 @@ export class ChannelCreator {
   }
 
   async createNewVoiceChannel(msg: Message, slotsLimit: number) {
-    const config = await new DataWriter().read(path.join(serverDir, msg.guild!.id, configFile));
-    const vocalsContainerID: string = config.Vocals_Options.vocals_category_id;
-    const vocalsMaxSlots: number = config.Vocals_Options.max_users.count;
-    const reachedMessage: string = config.Vocals_Options.max_users.reached_message;
-    const deleteCreationCommand: boolean = config.Vocals_Options.purge_options.purge_creation_commands;
-    const msgDeleteIdle: number = config.Vocals_Options.purge_options.purge_creation_commands_idle;
-    const moveCreator: boolean = config.Vocals_Options.move_creator_inside;
-    const shareInvite: boolean = config.Channels_Options.invites_channel.post_invite_links;
-    const allowLogs: boolean = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
-    
-    // Issues & security tweaks for custom numbers especially
-    if (isNaN(slotsLimit)) return undefined;
-    if (slotsLimit >= vocalsMaxSlots) return msg.reply(reachedMessage);
+    try {
+      const config = await new DataWriter().read(
+        path.join(serverDir, msg.guild!.id, configFile)
+      );
+      const vocalsContainerID: string =
+        config.Vocals_Options.vocals_category_id;
+      const vocalsMaxSlots: number = config.Vocals_Options.max_users.count;
+      const reachedMessage: string =
+        config.Vocals_Options.max_users.reached_message;
+      const deleteCreationCommand: boolean =
+        config.Vocals_Options.purge_options.purge_creation_commands;
+      //const msgDeleteIdle: number = config.Vocals_Options.purge_options.purge_creation_commands_idle;
+      const moveCreator: boolean = config.Vocals_Options.move_creator_inside;
+      const shareInvite: boolean =
+        config.Channels_Options.invites_channel.post_invite_links;
+      const allowLogs: boolean =
+        config.Channels_Options.logs_channel.logs_options.channels_creations
+          .enabled;
 
-    const channelName = config.Vocals_Options.custom_vocals_titles
-      .replace('{{user}}', msg.author.username);
+      // Issues & security tweaks for custom numbers especially
+      if (isNaN(slotsLimit)) return undefined;
+      if (slotsLimit >= vocalsMaxSlots) return msg.reply(reachedMessage);
 
-    // Generate the temp channel with users specs
-    const newChannel = await msg.guild!.channels.create(channelName, {
-      type: "voice",
-      userLimit: slotsLimit,
-      // REMARK : Huge issue there, there's no way to convert channel id to "1615616",
-      // the only way to makes it works is to set the "" manually inside the config line
-      // it's never working otherwise, is it a lib issue ??
-      parent: vocalsContainerID
-    }).catch(console.error) as VoiceChannel;
+      const channelName = config.Vocals_Options.custom_vocals_titles.replace(
+        "{{user}}",
+        msg.author.username
+      );
 
-    // Delete the command msg for clearance
-    if (deleteCreationCommand) msg.delete({timeout: msgDeleteIdle}).catch(console.error);
+      // Generate the temp channel with users specs
+      const newChannel = await msg.guild!.channels.create({
+        name: channelName,
+        type: ChannelType.GuildVoice,
+        userLimit: slotsLimit,
+        // REMARK : Huge issue there, there's no way to convert channel id to "1615616",
+        // the only way to makes it works is to set the "" manually inside the config line
+        // it's never working otherwise, is it a lib issue ??
+        parent: vocalsContainerID,
+      });
 
-    // Create an invite for the new temp channel
-    if (shareInvite) new CreateInvite(msg.member!, newChannel);
+      // Delete the command msg for clearance
+      if (deleteCreationCommand) msg.delete().catch(console.error);
 
-    // Moves the user into his new temporary channel feature
-    if (moveCreator) new Mover(msg.member!, newChannel);
+      // Create an invite for the new temp channel
+      if (shareInvite) new CreateInvite(msg.member!, newChannel);
 
-    const msgContent = config.Channels_Options.logs_channel.logs_options.channels_creations.message
-      .replace('{{user}}', msg.author.username)
-      .replace('{{channel}}', newChannel.name);
+      // Moves the user into his new temporary channel feature
+      if (moveCreator) new Mover(msg.member!, newChannel);
 
-    if (allowLogs) new Log(msg.author.client.user!, msgContent);
-  };
+      const msgContent =
+        config.Channels_Options.logs_channel.logs_options.channels_creations.message
+          .replace("{{user}}", msg.author.username)
+          .replace("{{channel}}", newChannel.name);
+
+      if (allowLogs) new Log(msg.author.client.user!, msgContent);
+    } catch (e) {
+      console.error;
+    }
+  }
 }

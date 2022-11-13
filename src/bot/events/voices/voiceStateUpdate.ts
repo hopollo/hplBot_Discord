@@ -1,20 +1,20 @@
-import { VoiceState, Guild } from "discord.js";
-import { Log } from "../../utils/logs/logs";
-import { Bot_Config } from '../../../../config.json';
-import path from 'path';
-import { ChannelDeleter } from "../../utils/channels/deleteChannel";
+import { VoiceState } from "discord.js";
+//import { Log } from "../../utils/logs/logs";
+//import { Bot_Config } from '../../../../config.json';
+//import path from 'path';
+//import { ChannelDeleter } from "../../utils/channels/deleteChannel";
 
-export async function voiceStateUpdate(oldState: VoiceState , newState: VoiceState) {
+export const voiceStateUpdate = async (oldState: VoiceState , _newState: VoiceState) => {
   try {
-    const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
-    const configFile = Bot_Config.Servers_Config.templates.configFile;
+    //const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
+    //const configFile = Bot_Config.Servers_Config.templates.configFile;
 
-    const currentGuild: Guild = (oldState === undefined) ? newState.guild! : oldState.guild!;
-    const config = await import(path.join(serverDir, currentGuild.id, configFile));
-    const allowLogs = config.Channels_Options.logs_channel.logs_options.users_movements.enabled;
+    //const currentGuild: Guild = (oldState === undefined) ? newState.guild! : oldState.guild!;
+    //const config = await import(path.join(serverDir, currentGuild.id, configFile));
+    //const allowLogs = config.Channels_Options.logs_channel.logs_options.users_movements.enabled;
   
-    if (!allowLogs) return;
-  
+    //if (!allowLogs) return;
+    /*
     if (oldState.channel?.id && newState.channel?.id) {
       const msgContent: string = config.Channels_Options.logs_channel.logs_options.users_movements.switch_message
           .replace('{{user}}', newState.client.user?.username)
@@ -36,5 +36,10 @@ export async function voiceStateUpdate(oldState: VoiceState , newState: VoiceSta
       // Handles disconnect
       new ChannelDeleter().checkUsersOf(oldState.channel!);
     }
-  } catch (error) { console.error; }
+    */
+
+    if (oldState.channel?.members.values.length === 0 && oldState.channel.deletable) {
+      await oldState.channel.delete("Purge du canal temporaire vide.");
+    }
+  } catch (e) { console.error(e) }
 }

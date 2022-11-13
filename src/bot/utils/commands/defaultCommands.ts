@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, GuildMember, TextChannel } from "discord.js";
+import { Message, GuildMember, TextChannel } from "discord.js";
 import { Bot_Config } from '../../../../config.json';
 import path from "path";
 import { ChannelCreator } from "../channels/createChannel";
@@ -37,7 +37,7 @@ export class Command {
       case '!editcom': this.editCom(); break;
       case '!delcom': this.delCom(); break;
       case '!ban': this.ban(); break;
-      //case '!unban': this.unban(); break;
+      case '!unban': this.unban(); break;
       case '!kick': this.kick(); break;
       case '!mute': this.mute(); break;
       case '!unmute': this.unmute(); break;
@@ -46,7 +46,7 @@ export class Command {
       case '!trio': new ChannelCreator(this._msg, 3); break;
       case '!squad': new ChannelCreator(this._msg, 5); break;
       case '!purge': this.purge(); break;
-      case '!help': this.help(); break;
+      //case '!help': this.help(); break;
       case customCommand: this.customChannel(); break;
       case '!scrap': this.fecthBotCommmands(); break;
       default:
@@ -55,7 +55,7 @@ export class Command {
   }
 
   private async fecthCommand(msg: Message) {
-    if (!msg.member?.hasPermission("MANAGE_GUILD")) return msg.reply(`Sorry, you'r not allowed.`);
+    if (!msg.member?.permissions.has("ManageGuild")) return msg.reply(`Sorry, you'r not allowed.`);
     
     const unknownCommand = this._cfg.Commands_Options.enabled;
     const unknownCommandMessage = this._cfg.Commands_Options.message;
@@ -75,6 +75,7 @@ export class Command {
     new Scrapper(this._msg, this._msg.guild!.id, this._cmd);
   }
 
+  /*
   private help() {
     const helpEmbed = new MessageEmbed()
       .setAuthor('HplBot Commands :')
@@ -94,9 +95,10 @@ export class Command {
       .setFooter('more info on twitter @HoPolloTV');
     this._msg.reply(helpEmbed);
   }
+  */
 
   private addCom() {
-    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return undefined;
+    if (!this._msg.member?.permissions.has("ManageGuild")) return undefined;
 
     const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
     const command: string = match[2];
@@ -107,7 +109,7 @@ export class Command {
   }
 
   private editCom() {
-    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return undefined;
+    if (!this._msg.member?.permissions.has("ManageGuild")) return undefined;
 
     const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
     const command: string = match[2];
@@ -118,7 +120,7 @@ export class Command {
   }
 
   private delCom() {
-    if (!this._msg.member?.hasPermission('MANAGE_GUILD')) return undefined;
+    if (!this._msg.member?.permissions.has("ManageGuild")) return undefined;
 
     const match: any = this._content.match(/^(!\w+)\s(!\w+)/);
     const command = match[2];
