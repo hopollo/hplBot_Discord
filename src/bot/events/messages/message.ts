@@ -29,6 +29,7 @@ export const message: any = async (msg: Message) => {
     switch (msg.content) {
       case "!duo":
         return createVoiceChannel(
+          msg,
           msg.guild!,
           msg.member!,
           `${msg.author.username}'s Duos`,
@@ -36,6 +37,7 @@ export const message: any = async (msg: Message) => {
         );
       case "!trio":
         return createVoiceChannel(
+          msg,
           msg.guild!,
           msg.member!,
           `${msg.author.username}'s Trios`,
@@ -43,6 +45,7 @@ export const message: any = async (msg: Message) => {
         );
       case "!squad":
         return createVoiceChannel(
+          msg,
           msg.guild!,
           msg.member!,
           `${msg.author.username}'s Squad`,
@@ -68,6 +71,7 @@ export const message: any = async (msg: Message) => {
 };
 
 const createVoiceChannel = async (
+  msg: Message,
   guild: Guild,
   author: GuildMember,
   name: string,
@@ -81,6 +85,9 @@ const createVoiceChannel = async (
       userLimit: slots,
       parent: "464153673962881024"
     });
+
+    // removes the message
+    await msg.delete();
 
     // Move the owner inside;
     if (author.voice !== null) await author.voice.setChannel(newChannel.id);
