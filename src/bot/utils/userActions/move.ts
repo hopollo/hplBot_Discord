@@ -20,7 +20,7 @@ export class Mover {
     */
     if (target.voice !== undefined) {
       target.voice.setChannel(destination, 'Moved to own temp channel')
-        .catch(err => { /* DONT WANT TO SEE THOSE */ });
+        .catch(e => console.error(e));
     }
   }
 }

@@ -1,5 +1,5 @@
 import { TextChannel, GuildMember, DiscordAPIError } from "discord.js";
-import { Log } from "../logs/logs";
+import { Log } from "../logs/logs.ts";
 
 export class Purger {
   constructor(initiator: GuildMember, source: TextChannel, length: number) {
@@ -7,12 +7,12 @@ export class Purger {
   }
 
   purge(initiator: GuildMember, source: TextChannel, length: number) {
-    if (!initiator.hasPermission('MANAGE_CHANNELS') && length > 10) 
+    if (!initiator.permissions.has("ManageChannels") && length > 10)
       return initiator.send(`Security stop : Only administrators can purge more than 10 messages.`);
-    
-    if (initiator.hasPermission('ADMINISTRATOR') && length > 100)
-        return initiator.send(`Bulk size too hight, aim from 1 to 100 messages max per chunks`);
-            
+
+    if (initiator.permissions.has("Administrator") && length > 100)
+      return initiator.send(`Bulk size too hight, aim from 1 to 100 messages max per chunks`);
+
     source.bulkDelete(length, true)
       .then(() => {
         const msgContent = `${initiator.displayName} Purged : **${source.name}** (Length: ${length})`;

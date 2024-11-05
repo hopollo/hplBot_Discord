@@ -1,15 +1,15 @@
 import { Message, GuildMember, TextChannel } from "discord.js";
-import { Bot_Config } from '../../../../config.json';
-import path from "path";
-import { ChannelCreator } from "../channels/createChannel";
-import { DataWriter } from "../data/write";
-import { Scrapper } from "../scrapper/scrapper";
-import { PunishHandler } from "../userActions/punish";
-import { Purger } from "../channels/purger";
+import config from '../../../../config.json' with { type: "json" };
+import path from "node:path";
+import { ChannelCreator } from "../channels/createChannel.ts";
+import { DataWriter } from "../data/write.ts";
+import { Scrapper } from "../scrapper/scrapper.ts";
+import { PunishHandler } from "../userActions/punish.ts";
+import { Purger } from "../channels/purger.ts";
 
-const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
-const configFile = Bot_Config.Servers_Config.templates.configFile;
-const commandFile = Bot_Config.Servers_Config.templates.commandsFile;
+const serverDir = path.join(__dirname, '../../../..', config.Bot_Config.Servers_Config.servers_path);
+const configFile = config.Bot_Config.Servers_Config.templates.configFile;
+const commandFile = config.Bot_Config.Servers_Config.templates.commandsFile;
 
 export class Command {
   private _cmd: string;
@@ -32,7 +32,7 @@ export class Command {
     this._cfg = await new DataWriter().read(path.join(serverDir, msg.guild?.id!, configFile));
     const customCommand: string = this._cfg.Vocals_Options.creation_command;
 
-    switch(this._cmd) {
+    switch (this._cmd) {
       case '!addcom': this.addCom(); break;
       case '!editcom': this.editCom(); break;
       case '!delcom': this.delCom(); break;
@@ -46,7 +46,7 @@ export class Command {
       case '!trio': new ChannelCreator(this._msg, 3); break;
       case '!squad': new ChannelCreator(this._msg, 5); break;
       case '!purge': this.purge(); break;
-      //case '!help': this.help(); break;
+      case '!help': this.help(); break;
       case customCommand: this.customChannel(); break;
       case '!scrap': this.fecthBotCommmands(); break;
       default:
@@ -56,17 +56,17 @@ export class Command {
 
   private async fecthCommand(msg: Message) {
     if (!msg.member?.permissions.has("ManageGuild")) return msg.reply(`Sorry, you'r not allowed.`);
-    
+
     const unknownCommand = this._cfg.Commands_Options.enabled;
     const unknownCommandMessage = this._cfg.Commands_Options.message;
-    
+
     const response = await new DataWriter().findInto(this.commandsFilePath, this._cmd) as string;
     if (response) return msg.reply(response);
 
     if (unknownCommand) {
       const msgContent = unknownCommandMessage
         .replace('{{command}}', this._cmd);
-      
+
       this._msg.reply(msgContent);
     }
   }
@@ -103,8 +103,8 @@ export class Command {
     const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
     const command: string = match[2];
     const resp: string = match[3];
-    const data: { [command: string]: string; } = { [command] : resp };
-    
+    const data: { [command: string]: string; } = { [command]: resp };
+
     new DataWriter().appendTo(this.commandsFilePath, data);
   }
 
@@ -114,7 +114,7 @@ export class Command {
     const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
     const command: string = match[2];
     const response: string = match[3];
-    const data: { [command: string]: string; } = { [command] : response };
+    const data: { [command: string]: string; } = { [command]: response };
 
     new DataWriter().appendTo(this.commandsFilePath, data);
   }
@@ -124,9 +124,9 @@ export class Command {
 
     const match: any = this._content.match(/^(!\w+)\s(!\w+)/);
     const command = match[2];
-    new DataWriter().removeTo(this.commandsFilePath, command); 
+    new DataWriter().removeTo(this.commandsFilePath, command);
   }
-  
+
   private customChannel() {
     const match: any = this._content.match(/^(!\w+)\s(!\w+)/);
     const slots: string = match[2];
@@ -182,12 +182,16 @@ export class Command {
 
     new PunishHandler(this._msg.member!, target, 'unmute', undefined, reason);
   }
-  
+
   private purge() {
     const match: any = this._content.match(/^(!\w+)\s(\w+)/);
     const length: string = match[2];
 
     new Purger(this._msg.member!, this._msg.channel as TextChannel, +length);
+  }
+
+  private help() {
+    this._msg.reply("Find help in my twitter !");;
   }
 
   /*

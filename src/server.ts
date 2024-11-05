@@ -1,3 +1,3 @@
-import HplBot from "./bot/utils/core/bot";
+import HplBot from "./bot/utils/core/bot.ts";
 
 HplBot();

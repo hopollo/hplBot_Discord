@@ -1,8 +1,8 @@
-import path from 'path';
+import path from 'node:path';
 import { Invite, VoiceChannel, TextChannel, GuildMember } from 'discord.js';
-import { Log } from '../logs/logs';
-import { DataWriter } from '../data/write';
-import { Bot_Config } from '../../../../config.json';
+import { Log } from '../logs/logs.ts';
+import { DataWriter } from '../data/write.ts';
+import { Bot_Config } from '../../../../config.json' with { type: 'json' };
 
 const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
 const configFile = Bot_Config.Servers_Config.templates.configFile;
@@ -10,7 +10,7 @@ const configFile = Bot_Config.Servers_Config.templates.configFile;
 export class CreateInvite {
   private _source: VoiceChannel;
   private _author: GuildMember;
-  
+
   constructor(author: GuildMember, channelSource: VoiceChannel) {
     this._author = author;
     this._source = channelSource;
@@ -22,7 +22,7 @@ export class CreateInvite {
     const invitesChannelContainerID: string = config.Channels_Options.invites_channel.id;
     const allowLogs: boolean = config.Channels_Options.logs_channel.logs_options.channels_creations.enabled;
 
-    const newChannelInvite: Invite = await source.createInvite({reason: 'Temporary Channel'});
+    const newChannelInvite: Invite = await source.createInvite({ reason: 'Temporary Channel' });
 
     const inviteLink = config.Channels_Options.invites_channel.invite_links_message
       .replace('{{user}}', initiator.user.username)

@@ -1,14 +1,14 @@
 import { GuildChannel } from "discord.js";
-import path from 'path';
-import { Bot_Config } from '../../../../config.json';
-import { Log } from '../../utils/logs/logs';
-import { DataWriter } from "../../utils/data/write";
+import path from 'node:path';
+import { Bot_Config } from '../../../../config.json' with { type: 'json'};
+import { Log } from '../../utils/logs/logs.ts';
+import { DataWriter } from "../../utils/data/write.ts";
 
 export async function channelDelete(channel: GuildChannel) {
   try {
     const config = await new DataWriter().read(path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path, channel.guild.id, Bot_Config.Servers_Config.templates.configFile));
 
-    const allowLogs = config.Channels_Options.logs_channel.logs_options.channels_deletions.enabled;
+    const allowLogs = Bot_Config.Channels_Options.logs_channel.logs_options.channels_deletions.enabled;
 
     if (!allowLogs) return;
 
@@ -20,5 +20,5 @@ export async function channelDelete(channel: GuildChannel) {
       .replace('{{reason}}', reason);
 
     new Log(author, msgContent);
-  } catch (error) { console.error; }
+  } catch (e) { console.error(e) }
 }

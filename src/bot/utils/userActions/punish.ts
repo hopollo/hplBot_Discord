@@ -1,5 +1,5 @@
-import { GuildMember, GuildChannel, DiscordAPIError, Collection } from "discord.js";
-import { Log } from "../logs/logs";
+import { GuildMember, GuildChannel, DiscordAPIError } from "discord.js";
+import { Log } from "../logs/logs.ts";
 
 declare enum PunishTypes {
   ban = 0,
@@ -19,7 +19,7 @@ export class PunishHandler {
   private _channel: GuildChannel | undefined;
 
   // TODO : HoPollo, replace type with proper list
-  constructor(initiator: GuildMember, target: GuildMember, type: string, time?: number, reason?: string, source? : GuildChannel) {
+  constructor(initiator: GuildMember, target: GuildMember, type: string, time?: number, reason?: string, source?: GuildChannel) {
     this._initiator = initiator;
     this._target = target;
     this._time = time;
@@ -28,12 +28,12 @@ export class PunishHandler {
     this._channel = source;
 
     switch (this._type) {
-      case "ban"  : this.mute(); break;
-      case "unmute" : this.unmute(); break;
-      case "ban" : this.ban(); break;
-      case "kick" : this.kick(); break;
-      case "unban" : this.unban(); break;
-      case "eject" : this.eject(); break;
+      case "mute": this.mute(); break;
+      case "unmute": this.unmute(); break;
+      case "ban": this.ban(); break;
+      case "kick": this.kick(); break;
+      case "unban": this.unban(); break;
+      case "eject": this.eject(); break;
 
       default:
         console.error(`Error : Unkown Pusnish type (${type})`);
@@ -45,7 +45,7 @@ export class PunishHandler {
    * Mute an User
    */
   private mute() {
-    if (!this._initiator.hasPermission('MUTE_MEMBERS')) return undefined;
+    if (!this._initiator.permissions.has("MuteMembers")) return undefined;
 
     this._target.voice.setMute(true, this._reason)
       .then(() => {
@@ -56,30 +56,30 @@ export class PunishHandler {
         this._initiator.send(`Error while trying to mute **${this._target.displayName}**: *${err.message}*, Maybe try it from Discord.`);
       });
   }
-  
+
   /**
    * Unmute an User
    */
   private unmute() {
-    if (!this._initiator.hasPermission('MUTE_MEMBERS')) return undefined;
+    if (!this._initiator.permissions.has("MuteMembers")) return undefined;
 
     this._target.voice.setMute(false, this._reason).then(() => {
       const msgContent = `${this._initiator.displayName} Unmuted : **${this._target.displayName}** (Reason : ${this._reason})`;
       new Log(this._initiator.user, msgContent);
     })
-    .catch((err: DiscordAPIError) => {
-      this._initiator.send(`Error while trying to unmute **${this._target.displayName}**: *${err.message}*, Maybe try it from Discord.`);
-    });
+      .catch((err: DiscordAPIError) => {
+        this._initiator.send(`Error while trying to unmute **${this._target.displayName}**: *${err.message}*, Maybe try it from Discord.`);
+      });
   }
-  
+
   /**
    * Ban an User (in days)
    */
   private ban() {
-    if (!this._initiator.hasPermission('BAN_MEMBERS') && 
-        !this._target.bannable) return undefined;
-    
-    this._target.ban({ days: this._time, reason:  this._reason })
+    if (!this._initiator.permissions.has("BanMembers") &&
+      !this._target.bannable) return undefined;
+
+    this._target.ban({ deleteMessageSeconds: this._time, reason: this._reason })
       .then(() => {
         const msgContent = `${this._initiator.displayName} Banned : **${this._target.displayName}**, ${this._time}d (Reason : ${this._reason})`;
         // TODO (hopollo) : purge all his past msg option
@@ -93,28 +93,30 @@ export class PunishHandler {
   /**
    * Unban an User
    */
-  private async unban() {
-    if (this._initiator.hasPermission('BAN_MEMBERS')) return undefined;
+  private unban() {
+    if (this._initiator.permissions.has('BanMembers')) return undefined;
     //TODO: (hopollo) : Finish unban feature
     //this._initiator.send('Feature not available yet');
 
+    /*
     this._initiator.guild.fetchBans()
-      .then(res=> res.toJSON())
+      .then(res => res.toJSON())
       .then(console.log)
       .catch((err: DiscordAPIError) => {
         this._initiator.send(`Error while trying to unban **${this._target.displayName}**: *${err.message}*, Maybe try it from Discord.`);
       });
+      */
   }
 
   /**
    * Ejects an User from his current VoiceChannel
    */
   private eject() {
-    if (!this._initiator.hasPermission('MANAGE_CHANNELS') ||
-        !this._initiator.hasPermission('KICK_MEMBERS') &&    
-        !this._target.kickable) return undefined;
+    if (!this._initiator.permissions.has("ManageChannels") ||
+      !this._initiator.permissions.has("KickMembers") &&
+      !this._target.kickable) return undefined;
 
-    this._target.voice.kick(this._reason)
+    this._target.kick(this._reason)
       .then(() => {
         const msgContent = `${this._initiator.displayName} Ejected : **${this._target.displayName}** (Reason : ${this._reason})`;
         new Log(this._initiator.user, msgContent);
@@ -128,9 +130,9 @@ export class PunishHandler {
    * Kick an User from the Guild
    */
   private kick() {
-    if (!this._initiator.hasPermission('KICK_MEMBERS') || 
-        !this._initiator.hasPermission('BAN_MEMBERS') && 
-        !this._target.kickable) return undefined;
+    if (!this._initiator.permissions.has("KickMembers") ||
+      !this._initiator.permissions.has("BanMembers") &&
+      !this._target.kickable) return undefined;
 
     this._target.kick(this._reason)
       .then(() => {

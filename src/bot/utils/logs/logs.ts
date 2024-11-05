@@ -1,10 +1,10 @@
-import { MessageEmbed, User, TextChannel, Guild } from 'discord.js';
-import path from 'path';
-import { Bot_Config } from '../../../../config.json';
-import { DataWriter } from '../data/write';
+import path from 'node:path';
+import { User } from 'discord.js';
+import { Bot_Config } from '../../../../config.json' with { type: 'json' };
+//import { DataWriter } from '../data/write.ts';
 
-const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
-const configFile = Bot_Config.Servers_Config.templates.configFile;
+//const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
+//const configFile = Bot_Config.Servers_Config.templates.configFile;
 
 export class Log {
   constructor(initiator: User, message: string) {

@@ -1,16 +1,16 @@
 //import path from 'path';
-import { Bot_Config } from "../../../../config.json";
+import configJSON from "../../../../config.json" with { type: "json" };
 //import { Command } from '../../utils/commands/defaultCommands';
 //import { DataWriter } from '../../utils/data/write';
 import { Guild, Message, GuildMember } from "discord.js";
 
-export const message: any = async (msg: Message) => {
+export const message = async (msg: Message) => {
   try {
     //const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
     //const configFile = Bot_Config.Servers_Config.templates.configFile;
-    const stableMode: boolean = Bot_Config.stable_mode.enabled;
+    const stableMode: boolean = configJSON.Bot_Config.stable_mode.enabled;
     const msgContent: string = msg.content.toLowerCase();
-    const commandsPrefix: string = Bot_Config.commands_prefix || "!";
+    const commandsPrefix: string = configJSON.Bot_Config.commands_prefix || "!";
     //const config = await new DataWriter().read(path.join(serverDir, msg.guild!.id, configFile));
     const isCommand = msgContent.startsWith(commandsPrefix);
     //const invitesChannelID: string = config.Channels_Options.invites_channel.id;
@@ -27,6 +27,8 @@ export const message: any = async (msg: Message) => {
     if (!msg.deletable) return null;
 
     switch (msg.content) {
+      case "!help":
+        return msg.reply("Seek help by DM me on twitter !");
       case "!duo":
         return createVoiceChannel(
           msg,

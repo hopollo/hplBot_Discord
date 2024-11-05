@@ -1,10 +1,10 @@
-import path from "path";
-import { Bot_Config } from "../../../../config.json";
+import path from "node:path";
+import { Bot_Config } from "../../../../config.json" with { type: "json" };
 import { ChannelType, Message } from "discord.js";
-import { Log } from "../logs/logs";
-import { Mover } from "../userActions/move";
-import { CreateInvite } from "../invites/createInvite";
-import { DataWriter } from "../data/write";
+import { Log } from "../logs/logs.ts";
+import { Mover } from "../userActions/move.ts";
+import { CreateInvite } from "../invites/createInvite.ts";
+import { DataWriter } from "../data/write.ts";
 
 const serverDir = path.join(
   __dirname,

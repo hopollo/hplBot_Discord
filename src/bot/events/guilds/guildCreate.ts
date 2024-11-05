@@ -1,9 +1,9 @@
 import { Guild } from "discord.js";
-import { ServerClient } from "../../utils/data/serverClient";
+import { ServerClient } from "../../utils/data/serverClient.ts";
 
 export function guildCreate(guild: Guild) {
   try {
-    console.log(`Added by ${guild.name} (${guild.id}) from ${guild.region}`);
+    console.log(`Added by ${guild.name} (${guild.id})`);
     new ServerClient().generateNewClient(guild.id);
-  } catch (error) { console.error; }
+  } catch (e) { console.error(e) }
 }
