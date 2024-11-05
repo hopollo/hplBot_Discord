@@ -1,4 +1,4 @@
-import { VoiceChannel, GuildMember } from "discord.js";
+import { GuildMember, VoiceChannel } from "discord.js";
 
 export class Mover {
   private _user: GuildMember;
@@ -11,7 +11,7 @@ export class Mover {
   }
 
   private moveTo(target: GuildMember, destination: VoiceChannel) {
-    /* Status: 
+    /* Status:
     CONNECTED: 0
     CONNECTING: 1
     AUTHENTICATING: 2
@@ -19,8 +19,8 @@ export class Mover {
     DISCONNECTED: 4
     */
     if (target.voice !== undefined) {
-      target.voice.setChannel(destination, 'Moved to own temp channel')
-        .catch(e => console.error(e));
+      target.voice.setChannel(destination, "Moved to own temp channel")
+        .catch((e) => console.error(e));
     }
   }
 }

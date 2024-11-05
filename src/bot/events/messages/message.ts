@@ -2,7 +2,7 @@
 import configJSON from "../../../../config.json" with { type: "json" };
 //import { Command } from '../../utils/commands/defaultCommands';
 //import { DataWriter } from '../../utils/data/write';
-import { Guild, Message, GuildMember } from "discord.js";
+import { Guild, GuildMember, Message } from "discord.js";
 
 export const message = async (msg: Message) => {
   try {
@@ -18,10 +18,11 @@ export const message = async (msg: Message) => {
     //const onlyCommands: boolean = config.Channels_Options.invites_channel.allow_only_commands_messages;
     //const onlyCreations: boolean = config.Channels_Options.invites_channel.allow_only_creation_messages;
 
-    if (!stableMode)
+    if (!stableMode) {
       return await msg.reply(
-        "Maintenance en cours du bot, merci de réessayer plus tard."
+        "Maintenance en cours du bot, merci de réessayer plus tard.",
       );
+    }
     if (msg.author.bot) return null;
     if (!isCommand) return null;
     if (!msg.deletable) return null;
@@ -35,7 +36,7 @@ export const message = async (msg: Message) => {
           msg.guild!,
           msg.member!,
           `${msg.author.username}'s Duos`,
-          2
+          2,
         );
       case "!trio":
         return createVoiceChannel(
@@ -43,7 +44,7 @@ export const message = async (msg: Message) => {
           msg.guild!,
           msg.member!,
           `${msg.author.username}'s Trios`,
-          3
+          3,
         );
       case "!squad":
         return createVoiceChannel(
@@ -51,7 +52,7 @@ export const message = async (msg: Message) => {
           msg.guild!,
           msg.member!,
           `${msg.author.username}'s Squad`,
-          5
+          5,
         );
       default:
         return null;
@@ -68,7 +69,7 @@ export const message = async (msg: Message) => {
 
     //new Command(msg);
   } catch (e) {
-    console.error;
+    console.error(e);
   }
 };
 
@@ -77,7 +78,7 @@ const createVoiceChannel = async (
   guild: Guild,
   author: GuildMember,
   name: string,
-  slots: number
+  slots: number,
 ) => {
   try {
     // create the voiceChannel
@@ -85,7 +86,7 @@ const createVoiceChannel = async (
       name,
       type: 2,
       userLimit: slots,
-      parent: "464153673962881024"
+      parent: "464153673962881024",
     });
 
     // removes the message

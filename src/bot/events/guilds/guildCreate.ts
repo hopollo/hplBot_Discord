@@ -5,5 +5,7 @@ export function guildCreate(guild: Guild) {
   try {
     console.log(`Added by ${guild.name} (${guild.id})`);
     new ServerClient().generateNewClient(guild.id);
-  } catch (e) { console.error(e) }
+  } catch (e) {
+    console.error(e);
+  }
 }

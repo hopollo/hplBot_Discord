@@ -5,5 +5,7 @@ export function guildDelete(guild: Guild) {
   try {
     console.log(`Removed by ${guild.name} (${guild.id})`);
     new ServerClient().removeClient(guild.id);
-  } catch (e) { console.error(e); }
+  } catch (e) {
+    console.error(e);
+  }
 }

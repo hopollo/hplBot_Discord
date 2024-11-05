@@ -2,9 +2,9 @@ import "jsr:@std/dotenv/load";
 import { Client, VoiceState } from "discord.js";
 //import { ready } from "../../events/states/ready";
 import { ready } from "../../events/states/ready.ts";
-import { message } from '../../events/messages/message.ts';
+import { message } from "../../events/messages/message.ts";
 //import { userUpdate } from '@events/users/userUpdate';
-import { voiceStateUpdate } from '../../events/voices/voiceStateUpdate.ts';
+import { voiceStateUpdate } from "../../events/voices/voiceStateUpdate.ts";
 //import { channelCreate } from '@events/channels/channelCreate';
 //import { channelDelete } from '@events/channels/channelDelete';
 //import { guildMemberAdd } from '@events/guilds/guildMemberAdd';
@@ -21,7 +21,7 @@ const HplBot = () => {
       "GuildMessages",
       "GuildVoiceStates",
       "Guilds",
-      "MessageContent"
+      "MessageContent",
     ],
   });
 
@@ -29,9 +29,12 @@ const HplBot = () => {
 
   client.once("ready", (client) => ready(client));
 
-
   //client.on('guildMemberAdd', (member) => guildMemberAdd(member));
-  client.on('voiceStateUpdate', (oldState: VoiceState, newState: VoiceState) => voiceStateUpdate(oldState, newState));
+  client.on(
+    "voiceStateUpdate",
+    (oldState: VoiceState, newState: VoiceState) =>
+      voiceStateUpdate(oldState, newState),
+  );
   client.on("messageCreate", (msg) => message(msg));
   /*
     client.on('userUpdate', (oldUser: User, newUser: User) => userUpdate(oldUser, newUser));

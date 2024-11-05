@@ -1,5 +1,5 @@
-import { Message, GuildMember, TextChannel } from "discord.js";
-import config from '../../../../config.json' with { type: "json" };
+import { GuildMember, Message, TextChannel } from "discord.js";
+import config from "../../../../config.json" with { type: "json" };
 import path from "node:path";
 import { ChannelCreator } from "../channels/createChannel.ts";
 import { DataWriter } from "../data/write.ts";
@@ -7,7 +7,11 @@ import { Scrapper } from "../scrapper/scrapper.ts";
 import { PunishHandler } from "../userActions/punish.ts";
 import { Purger } from "../channels/purger.ts";
 
-const serverDir = path.join(__dirname, '../../../..', config.Bot_Config.Servers_Config.servers_path);
+const serverDir = path.join(
+  __dirname,
+  "../../../..",
+  config.Bot_Config.Servers_Config.servers_path,
+);
 const configFile = config.Bot_Config.Servers_Config.templates.configFile;
 const commandFile = config.Bot_Config.Servers_Config.templates.commandsFile;
 
@@ -16,12 +20,12 @@ export class Command {
   private _content: string;
   private _msg: Message;
   private commandsFilePath: string;
-  private _cfg: any;
+  private _cfg: unknown;
 
   constructor(msg: Message) {
     this._msg = msg;
     this._content = msg.content;
-    this._cmd = this._content.toLowerCase().split(' ')[0];
+    this._cmd = this._content.toLowerCase().split(" ")[0];
 
     this.commandsFilePath = path.join(serverDir, msg.guild!.id, commandFile);
 
@@ -29,43 +33,82 @@ export class Command {
   }
 
   private async processMsg(msg: Message) {
-    this._cfg = await new DataWriter().read(path.join(serverDir, msg.guild?.id!, configFile));
+    this._cfg = await new DataWriter().read(
+      path.join(serverDir, msg.guild?.id!, configFile),
+    );
     const customCommand: string = this._cfg.Vocals_Options.creation_command;
 
     switch (this._cmd) {
-      case '!addcom': this.addCom(); break;
-      case '!editcom': this.editCom(); break;
-      case '!delcom': this.delCom(); break;
-      case '!ban': this.ban(); break;
-      case '!unban': this.unban(); break;
-      case '!kick': this.kick(); break;
-      case '!mute': this.mute(); break;
-      case '!unmute': this.unmute(); break;
-      case '!eject': this.eject(); break;
-      case '!duo': new ChannelCreator(this._msg, 2); break;
-      case '!trio': new ChannelCreator(this._msg, 3); break;
-      case '!squad': new ChannelCreator(this._msg, 5); break;
-      case '!purge': this.purge(); break;
-      case '!help': this.help(); break;
-      case customCommand: this.customChannel(); break;
-      case '!scrap': this.fecthBotCommmands(); break;
+      case "!addcom":
+        this.addCom();
+        break;
+      case "!editcom":
+        this.editCom();
+        break;
+      case "!delcom":
+        this.delCom();
+        break;
+      case "!ban":
+        this.ban();
+        break;
+      case "!unban":
+        this.unban();
+        break;
+      case "!kick":
+        this.kick();
+        break;
+      case "!mute":
+        this.mute();
+        break;
+      case "!unmute":
+        this.unmute();
+        break;
+      case "!eject":
+        this.eject();
+        break;
+      case "!duo":
+        new ChannelCreator(this._msg, 2);
+        break;
+      case "!trio":
+        new ChannelCreator(this._msg, 3);
+        break;
+      case "!squad":
+        new ChannelCreator(this._msg, 5);
+        break;
+      case "!purge":
+        this.purge();
+        break;
+      case "!help":
+        this.help();
+        break;
+      case customCommand:
+        this.customChannel();
+        break;
+      case "!scrap":
+        this.fecthBotCommmands();
+        break;
       default:
         this.fecthCommand(this._msg);
     }
   }
 
   private async fecthCommand(msg: Message) {
-    if (!msg.member?.permissions.has("ManageGuild")) return msg.reply(`Sorry, you'r not allowed.`);
+    if (!msg.member?.permissions.has("ManageGuild")) {
+      return msg.reply(`Sorry, you'r not allowed.`);
+    }
 
     const unknownCommand = this._cfg.Commands_Options.enabled;
     const unknownCommandMessage = this._cfg.Commands_Options.message;
 
-    const response = await new DataWriter().findInto(this.commandsFilePath, this._cmd) as string;
+    const response = await new DataWriter().findInto(
+      this.commandsFilePath,
+      this._cmd,
+    ) as string;
     if (response) return msg.reply(response);
 
     if (unknownCommand) {
       const msgContent = unknownCommandMessage
-        .replace('{{command}}', this._cmd);
+        .replace("{{command}}", this._cmd);
 
       this._msg.reply(msgContent);
     }
@@ -100,10 +143,10 @@ export class Command {
   private addCom() {
     if (!this._msg.member?.permissions.has("ManageGuild")) return undefined;
 
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
-    const command: string = match[2];
-    const resp: string = match[3];
-    const data: { [command: string]: string; } = { [command]: resp };
+    const match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const command: string = match![2];
+    const resp: string = match![3];
+    const data: { [command: string]: string } = { [command]: resp };
 
     new DataWriter().appendTo(this.commandsFilePath, data);
   }
@@ -111,10 +154,10 @@ export class Command {
   private editCom() {
     if (!this._msg.member?.permissions.has("ManageGuild")) return undefined;
 
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
-    const command: string = match[2];
-    const response: string = match[3];
-    const data: { [command: string]: string; } = { [command]: response };
+    const match = this._content.match(/^(!\w+)\s(!\w+)\s(.*)/);
+    const command = match![2];
+    const response = match![3];
+    const data: { [command: string]: string } = { [command]: response };
 
     new DataWriter().appendTo(this.commandsFilePath, data);
   }
@@ -122,76 +165,112 @@ export class Command {
   private delCom() {
     if (!this._msg.member?.permissions.has("ManageGuild")) return undefined;
 
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)/);
-    const command = match[2];
+    const match = this._content.match(/^(!\w+)\s(!\w+)/);
+    const command = match![2];
     new DataWriter().removeTo(this.commandsFilePath, command);
   }
 
   private customChannel() {
-    const match: any = this._content.match(/^(!\w+)\s(!\w+)/);
-    const slots: string = match[2];
+    const match = this._content.match(/^(!\w+)\s(!\w+)/);
+    const slots = match![2];
 
     new ChannelCreator(this._msg, +slots);
   }
 
   private ban() {
-    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(\w+)\s(.*)/);
-    const target: GuildMember = match[2];
-    const time: number = match[3];
-    const reason: string = match[4];
+    const match = this._content.match(/^(!\w+)\s(\w+)\s(\w+)\s(.*)/);
+    const target = match![2] as unknown;
+    const time: number = +match![3];
+    const reason = match![4];
 
-    new PunishHandler(this._msg.member!, target, 'ban', time, reason);
+    new PunishHandler(
+      this._msg.member!,
+      target as GuildMember,
+      "ban",
+      time,
+      reason,
+    );
   }
 
   private unban() {
-    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
-    const target: GuildMember = match[2];
-    const reason: string = match[3];
+    const match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
+    const target = match![2] as unknown;
+    const reason = match![3];
 
-    new PunishHandler(this._msg.member!, target, 'unban', undefined, reason);
+    new PunishHandler(
+      this._msg.member!,
+      target as GuildMember,
+      "unban",
+      undefined,
+      reason,
+    );
   }
 
   private kick() {
-    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
-    const target: GuildMember = match[2];
-    const reason: string = match[3];
+    const match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
+    const target = match![2] as unknown;
+    const reason: string = match![3];
 
-    new PunishHandler(this._msg.member!, target, 'kick', undefined, reason);
+    new PunishHandler(
+      this._msg.member!,
+      target as GuildMember,
+      "kick",
+      undefined,
+      reason,
+    );
   }
 
   private eject() {
-    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
-    const target: GuildMember = match[2];
-    const reason: string = match[3];
+    const match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
+    const target = match![2] as unknown;
+    const reason: string = match![3];
 
-    new PunishHandler(this._msg.member!, target, 'eject', undefined, reason);
+    new PunishHandler(
+      this._msg.member!,
+      target as GuildMember,
+      "eject",
+      undefined,
+      reason,
+    );
   }
 
   private mute() {
-    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
-    const target: GuildMember = match[2];
-    const reason: string = match[3];
+    const match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
+    const target = match![2] as unknown;
+    const reason: string = match![3];
 
-    new PunishHandler(this._msg.member!, target, 'mute', undefined, reason);
+    new PunishHandler(
+      this._msg.member!,
+      target as GuildMember,
+      "mute",
+      undefined,
+      reason,
+    );
   }
 
   private unmute() {
-    const match: any = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
-    const target: GuildMember = match[2];
-    const reason: string = match[3];
+    const match = this._content.match(/^(!\w+)\s(\w+)\s(.*)/);
+    const target = match![2] as unknown;
+    const reason = match![3];
 
-    new PunishHandler(this._msg.member!, target, 'unmute', undefined, reason);
+    new PunishHandler(
+      this._msg.member!,
+      target as GuildMember,
+      "unmute",
+      undefined,
+      reason,
+    );
   }
 
   private purge() {
-    const match: any = this._content.match(/^(!\w+)\s(\w+)/);
-    const length: string = match[2];
+    const match = this._content.match(/^(!\w+)\s(\w+)/);
+    const length: string = match![2];
 
     new Purger(this._msg.member!, this._msg.channel as TextChannel, +length);
   }
 
   private help() {
-    this._msg.reply("Find help in my twitter !");;
+    this._msg.reply("Find help in my twitter !");
   }
 
   /*

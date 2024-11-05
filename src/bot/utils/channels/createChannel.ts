@@ -9,7 +9,7 @@ import { DataWriter } from "../data/write.ts";
 const serverDir = path.join(
   __dirname,
   "../../../..",
-  Bot_Config.Servers_Config.servers_path
+  Bot_Config.Servers_Config.servers_path,
 );
 const configFile = Bot_Config.Servers_Config.templates.configFile;
 
@@ -21,7 +21,7 @@ export class ChannelCreator {
   async createNewVoiceChannel(msg: Message, slotsLimit: number) {
     try {
       const config = await new DataWriter().read(
-        path.join(serverDir, msg.guild!.id, configFile)
+        path.join(serverDir, msg.guild!.id, configFile),
       );
       const vocalsContainerID: string =
         config.Vocals_Options.vocals_category_id;
@@ -44,7 +44,7 @@ export class ChannelCreator {
 
       const channelName = config.Vocals_Options.custom_vocals_titles.replace(
         "{{user}}",
-        msg.author.username
+        msg.author.username,
       );
 
       // Generate the temp channel with users specs
@@ -67,14 +67,14 @@ export class ChannelCreator {
       // Moves the user into his new temporary channel feature
       if (moveCreator) new Mover(msg.member!, newChannel);
 
-      const msgContent =
-        config.Channels_Options.logs_channel.logs_options.channels_creations.message
-          .replace("{{user}}", msg.author.username)
-          .replace("{{channel}}", newChannel.name);
+      const msgContent = config.Channels_Options.logs_channel.logs_options
+        .channels_creations.message
+        .replace("{{user}}", msg.author.username)
+        .replace("{{channel}}", newChannel.name);
 
       if (allowLogs) new Log(msg.author.client.user!, msgContent);
     } catch (e) {
-      console.error;
+      console.error(e);
     }
   }
 }

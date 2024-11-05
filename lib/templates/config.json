@@ -28,14 +28,14 @@
           "enabled": true,
           "message": "{{user}} created channel : `{{channel}}`"
         },
-        "channels_deletions": { 
+        "channels_deletions": {
           "enabled": true,
           "message": "{{user}} removed `{{channel}}` (`{{reason}}`)"
         },
         "users_movements": {
           "enabled": true,
           "switch_message": "**{{user}} switched vocal channel : `{{old}}` -> `{{new}}`**",
-          "join_message" : "**{{user}} joined vocal channel : `{{channel}}`**"
+          "join_message": "**{{user}} joined vocal channel : `{{channel}}`**"
         },
         "users_actions": {
           "enabled": true,

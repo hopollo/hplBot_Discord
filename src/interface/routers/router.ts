@@ -1,45 +1,52 @@
+import path from "node:path";
+import { existsSync, readFileSync, writeFile } from "node:fs";
+import url, { URLSearchParams } from "node:url";
 import { Router } from "express";
-import url, { URLSearchParams } from "url";
-import fetch from "node-fetch";
-import { writeFile, existsSync, readFileSync } from "fs";
-import path from "path";
-import mdLog from "../middlewares/authMiddelware";
+import type { Guild } from "discord.js";
+import mdLog from "../middlewares/authMiddelware.ts";
 
 require("dotenv").config();
 
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", (_req: Request, res: Response) => {
   res.render("index", { title: "Welcome" });
 });
 
-router.get("/try", (req, res) => {
+router.get("/try", (_req: Request, res: Response) => {
   res.redirect(
-    `https://discordapp.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&scope=bot`
+    `https://discordapp.com/oauth2/authorize?client_id=${
+      Deno.env.get("CLIENT_ID")
+    }&scope=bot`,
   );
 });
 
-router.get("/login", (req, res) => {
+router.get("/login", (_req: Request, res: Response) => {
   res.redirect(
-    `https://discordapp.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=guilds%20identify`
+    `https://discordapp.com/api/oauth2/authorize?client_id=${
+      Deno.env.get("CLIENT_ID")
+    }&redirect_uri=${
+      Deno.env.get("REDIRECT_URI")
+    }&response_type=code&scope=guilds%20identify`,
   );
 });
 
-router.get("/template", (req, res) => {
+router.get("/template", (_req: Request, res: Response) => {
   res.redirect("https://discord.new/N3hmBUB5vqd7");
 });
 
-router.get("/callback", async (req, res) => {
+router.get("/callback", async (req: Request, res: Response) => {
   const obj = url.parse(req.url, true);
 
-  if (!obj.query.code)
+  if (!obj.query.code) {
     return res.send("Error while authenticating with Discord");
+  }
   const oathPath = path.join(
     __dirname,
     "../../..",
     "lib",
     "oauths",
-    obj.query.code.toString()
+    obj.query.code.toString(),
   );
 
   let oauth;
@@ -48,10 +55,10 @@ router.get("/callback", async (req, res) => {
   if (!exists) {
     const data = {
       code: obj.query.code,
-      redirect_uri: process.env.REDIRECT_URI,
+      redirect_uri: Deno.env.get("REDIRECT_URI"),
       grant_type: "authorization_code",
-      client_id: process.env.CLIENT_ID,
-      client_secret: process.env.CLIENT_SECRET,
+      client_id: Deno.env.get("CLIENT_ID"),
+      client_secret: Deno.env.get("CLIENT_SECRET"),
       scope: "Identify guilds",
     };
 
@@ -60,7 +67,7 @@ router.get("/callback", async (req, res) => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams(data),
+      body: new URLSearchParams(data as Record<string, string>),
       redirect: "follow",
     })
       .then((res) => res.json())
@@ -89,23 +96,23 @@ router.get("/callback", async (req, res) => {
     },
   })
     .then((res) => res.json())
-    .then((guilds) => {
+    .then((guilds: Guild[]) => {
       //let guildsResults: object[] = [];
 
       return Object.values(guilds).filter(
         (g: any) =>
           g.owner === true &&
           existsSync(
-            path.join(__dirname, "../../..", "lib", "servers", g.id)
-          ) === true
+              path.join(__dirname, "../../..", "lib", "servers", g.id),
+            ) === true,
       );
 
       /*
     await guilds.forEach(async (g: Guild) => {
       const guildPath = path.join(__dirname, '../../..', 'lib', 'servers', g.id);
-      
+
       if (!g.owner || !existsSync(guildPath)) return undefined;
-      
+
       const guildName = g.name;
       const guildID = g.id;
       const commands = await JSON.parse(readFileSync(path.join(guildPath, commandsPath)).toString());
@@ -123,11 +130,12 @@ router.get("/callback", async (req, res) => {
     return guildsResults;
     */
     })
-    .catch(console.error);
+    .catch((e) => console.error(e));
 
   const userData = {
     title: result.username,
-    userImage: `<img src="https://cdn.discordapp.com/avatars/${result.id}/${result.avatar}.webp">`,
+    userImage:
+      `<img src="https://cdn.discordapp.com/avatars/${result.id}/${result.avatar}.webp">`,
     servers: guilds,
     username: result.username,
     commands: null,
@@ -149,7 +157,7 @@ router.get("/:guildID/:type", mdLog, async (req, res) => {
     "lib",
     "servers",
     guildID,
-    typeFile
+    typeFile,
   );
   const result = await JSON.parse(readFileSync(filePath).toString());
 
@@ -165,15 +173,17 @@ router.get("/:guildID(\\d+)", (req, res) => {
       "../../..",
       "lib",
       "servers",
-      guildID
+      guildID,
     );
     const commands = JSON.parse(
-      readFileSync(guildPath + "/commands.json", "utf8")
+      readFileSync(guildPath + "/commands.json", "utf8"),
     );
 
     res.render("commands", { title: guildID, commands: commands });
   } catch (error) {
-    const data = `Sorry, Page Not Found or Doesn't Exists Anymore ! <a href='/'><button>Exit</button></a>`;
+    const data =
+      `Sorry, Page Not Found or Doesn't Exists Anymore ! <a href='/'><button>Exit</button></a>`;
+    console.error(error);
     res.status(404).render("error", { title: "Error", app: data });
   }
 });

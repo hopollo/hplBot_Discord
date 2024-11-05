@@ -1,17 +1,18 @@
-import path from 'node:path';
-import { User } from 'discord.js';
-import { Bot_Config } from '../../../../config.json' with { type: 'json' };
+//import path from "node:path";
+import { User } from "discord.js";
+//import config from "../../../../config.json" with { type: "json" };
 //import { DataWriter } from '../data/write.ts';
-
-//const serverDir = path.join(__dirname, '../../../..', Bot_Config.Servers_Config.servers_path);
-//const configFile = Bot_Config.Servers_Config.templates.configFile;
+/*
+const serverDir = path.join(__dirname, '../../../..', config.Bot_Config.Servers_Config.servers_path);
+const configFile = config.Bot_Config.Servers_Config.templates.configFile;
+*/
 
 export class Log {
   constructor(initiator: User, message: string) {
     this.initLog(initiator, message);
   }
 
-  async initLog(user: User, message: string) {
+  async initLog(_user: User, _message: string) {
     // TODO : HoPollo : Fix execptions errors
     /*
     const currentGuild: Guild = user.presence.guild!;

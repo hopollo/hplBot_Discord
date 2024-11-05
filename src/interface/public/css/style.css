@@ -2,12 +2,12 @@
   margin: 0;
   padding: 0;
   -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 :root {
-  --spread: .5em;
-  --shift: .01em;
+  --spread: 0.5em;
+  --shift: 0.01em;
   --base: #4d70c7;
   --c1: #21c2f5;
   --c2: #9c63c7;
@@ -26,34 +26,34 @@ body {
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .loader img {
   width: 15vw;
   -webkit-animation: rotates 1.5s linear infinite;
-          animation: rotates 1.5s linear infinite;
+  animation: rotates 1.5s linear infinite;
 }
 
 @-webkit-keyframes rotates {
   from {
     -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   to {
     -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
 @keyframes rotates {
   from {
     -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   to {
     -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
@@ -65,14 +65,14 @@ body {
   height: 100%;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   -webkit-box-pack: space-evenly;
-      -ms-flex-pack: space-evenly;
-          justify-content: space-evenly;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   text-align: center;
   text-shadow: 1px 1px black;
 }
@@ -100,64 +100,148 @@ button:hover {
 
 .top h1 {
   font-weight: 100;
-  margin: 0 0 .2em 0;
+  margin: 0 0 0.2em 0;
   font-size: 5em;
-  letter-spacing: -.01em;
+  letter-spacing: -0.01em;
   -webkit-transform: rotate(-5deg);
-          transform: rotate(-5deg);
+  transform: rotate(-5deg);
   color: transparent;
-  text-shadow: 0 0 0.05em var(--c1), 0 0 0.1em var(--base), calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), 0 0 var(--spread) var(--base), 0 0 calc(var(--spread) / 1.5) var(--base);
+  text-shadow:
+    0 0 0.05em var(--c1),
+    0 0 0.1em var(--base),
+    calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+    var(--c1),
+    calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+    var(--c1),
+    calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+    var(--c1),
+    calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+    var(--c1),
+    0 0 var(--spread) var(--base),
+    0 0 calc(var(--spread) / 1.5) var(--base);
 }
 
 .top h1 span:nth-child(1) {
   -webkit-animation: flicker1 1s infinite alternate ease-in-out;
-          animation: flicker1 1s infinite alternate ease-in-out;
+  animation: flicker1 1s infinite alternate ease-in-out;
 }
 
 .top h1 span:nth-child(2) {
   -webkit-animation: flicker1 1.5s infinite alternate ease-in-out;
-          animation: flicker1 1.5s infinite alternate ease-in-out;
+  animation: flicker1 1.5s infinite alternate ease-in-out;
 }
 
 .top h1 span:nth-child(3) {
-  -webkit-animation: flicker1 .47s infinite alternate ease-in-out;
-          animation: flicker1 .47s infinite alternate ease-in-out;
+  -webkit-animation: flicker1 0.47s infinite alternate ease-in-out;
+  animation: flicker1 0.47s infinite alternate ease-in-out;
 }
 
 .top h1 span:nth-child(4) {
-  -webkit-animation: flicker2 .1s infinite alternate ease-in-out;
-          animation: flicker2 .1s infinite alternate ease-in-out;
+  -webkit-animation: flicker2 0.1s infinite alternate ease-in-out;
+  animation: flicker2 0.1s infinite alternate ease-in-out;
 }
 
 @-webkit-keyframes flicker1 {
   95% {
-    text-shadow: 0 0 0.05em var(--c1), 0 0 0.1em var(--base), calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), 0 0 var(--spread) var(--base), 0 0 calc(var(--spread) / 1.5) var(--base);
+    text-shadow:
+      0 0 0.05em var(--c1),
+      0 0 0.1em var(--base),
+      calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      0 0 var(--spread) var(--base),
+      0 0 calc(var(--spread) / 1.5) var(--base);
   }
   98% {
-    text-shadow: 0 0 0.05em var(--c1), 0 0 0.1em var(--c2), calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), 0 0 0 var(--base), 0 0 0 var(--base);
+    text-shadow:
+      0 0 0.05em var(--c1),
+      0 0 0.1em var(--c2),
+      calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      0 0 0 var(--base),
+      0 0 0 var(--base);
   }
 }
 
 @keyframes flicker1 {
   95% {
-    text-shadow: 0 0 0.05em var(--c1), 0 0 0.1em var(--base), calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), 0 0 var(--spread) var(--base), 0 0 calc(var(--spread) / 1.5) var(--base);
+    text-shadow:
+      0 0 0.05em var(--c1),
+      0 0 0.1em var(--base),
+      calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      0 0 var(--spread) var(--base),
+      0 0 calc(var(--spread) / 1.5) var(--base);
   }
   98% {
-    text-shadow: 0 0 0.05em var(--c1), 0 0 0.1em var(--c2), calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), 0 0 0 var(--base), 0 0 0 var(--base);
+    text-shadow:
+      0 0 0.05em var(--c1),
+      0 0 0.1em var(--c2),
+      calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      0 0 0 var(--base),
+      0 0 0 var(--base);
   }
 }
 
 @-webkit-keyframes flicker2 {
   90% {
-    opacity: .1;
-    text-shadow: 0 0 0.05em var(--c1), 0 0 0.1em var(--c2), calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), 0 0 0 var(--base), 0 0 0 var(--base);
+    opacity: 0.1;
+    text-shadow:
+      0 0 0.05em var(--c1),
+      0 0 0.1em var(--c2),
+      calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      0 0 0 var(--base),
+      0 0 0 var(--base);
   }
 }
 
 @keyframes flicker2 {
   90% {
-    opacity: .1;
-    text-shadow: 0 0 0.05em var(--c1), 0 0 0.1em var(--c2), calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50) var(--c1), calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50) var(--c1), 0 0 0 var(--base), 0 0 0 var(--base);
+    opacity: 0.1;
+    text-shadow:
+      0 0 0.05em var(--c1),
+      0 0 0.1em var(--c2),
+      calc(var(--shift) * 1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * 1) calc(var(--shift) * -1) calc(var(--spread) / 50)
+      var(--c1),
+      calc(var(--shift) * -1) calc(var(--shift) * 1) calc(var(--spread) / 50)
+      var(--c1),
+      0 0 0 var(--base),
+      0 0 0 var(--base);
   }
 }
 
@@ -166,9 +250,9 @@ button:hover {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: space-evenly;
-      -ms-flex-pack: space-evenly;
-          justify-content: space-evenly;
-  padding: .5px;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
+  padding: 0.5px;
 }
 
 .top .getItButton {
@@ -203,7 +287,7 @@ button:hover {
 .center .current {
   display: block;
   -webkit-animation: smallFade 3000ms forwards;
-          animation: smallFade 3000ms forwards;
+  animation: smallFade 3000ms forwards;
   color: var(--c1);
 }
 

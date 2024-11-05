@@ -1,22 +1,21 @@
-window.onload = () => {
-  document.querySelector('.loader').style.display = 'none';
-  document.querySelector('.wrapper').style.display = 'flex';
-}
+globalThis.onload = () => {
+  document.querySelector(".loader").style.display = "none";
+  document.querySelector(".wrapper").style.display = "flex";
+};
 
-function openTab(evt, tabName) {
-  const guildID = document.querySelector('select').value;
-  
-  fetch(`${guildID}/${tabName.toLowerCase()}`, 
-    {
-      headers: {
-        'authorization': window.location.href
-      },
-    })
-    .then(res => res.json())
-    .then(data => {
+function _openTab(evt, tabName) {
+  const guildID = document.querySelector("select").value;
+
+  fetch(`${guildID}/${tabName.toLowerCase()}`, {
+    headers: {
+      "authorization": globalThis.location.href,
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
       if (tabName == "Commands") {
         // Clear all commands
-        $('#commandsContainer').find('tr:not(".titles")').remove();
+        $("#commandsContainer").find('tr:not(".titles")').remove();
         for (el in data) {
           $(`#commandsContainer`).append(`
             <tr>
@@ -36,11 +35,12 @@ function openTab(evt, tabName) {
           `);
         }
       }
-      
     })
     .catch(console.error);
 
-  let i, tabcontent, tablinks;
+  let i;
+  const tabcontent = "";
+  const tablinks = "";
   tabcontent = document.getElementsByClassName("tabContent");
   for (i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = "none";
@@ -53,29 +53,27 @@ function openTab(evt, tabName) {
   evt.currentTarget.className += " active";
 }
 
-function editCmd() {
-  alert('ok')
+function _editCmd() {
+  alert("ok");
 }
 
-function deleteCmd() {
+function _deleteCmd() {
   // delete selected command
-  const prompt = 
-  `
+  const prompt = `
     <div style='display: "flex"; flex-direction:"column";'>
       <h3>Command delete</h3>
       <p>Are you sure you want to delete : <span style='color:"red";'>TESTCMD</span></p>
       <button class="confirm default" onClick="confirm">Confirm</button>
       <button class="cancel red" onClick="cancel">Cancel</button>
     </div>
-  `
-  $('.wrapper').prepend(prompt);
+  `;
+  $(".wrapper").prepend(prompt);
 }
 
-function cancel() {
+function _cancel() {
   console.log("cancelling action");
 }
 
-function confirm() {
-  console.log('confirm action');
-  
+function _confirm() {
+  console.log("confirm action");
 }
